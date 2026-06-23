@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "150083215099",
+    "project_id": "clickme-406e8",
+    "storage_bucket": "clickme-406e8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150083215099:android:d4532e6003696328485a5e",
+        "android_client_info": {
+          "package_name": "com.example.click_me"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBF4mquQX8Rvn29sZG3X2cd8s9m0ld8Y7k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
