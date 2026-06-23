@@ -8,7 +8,7 @@ class Customtextfield extends StatelessWidget {
     required this.second,
     this.icon,
     required this.controller, this.validator,
-    t, this.keyboardType
+     this.keyboardType
   });
   final bool obscureText;
   final String? first;

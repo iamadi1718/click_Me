@@ -19,11 +19,15 @@ class _SignupscreenState extends State<Signupscreen> {
   final namecontroller = TextEditingController();
   final birthcontroller = TextEditingController();
   final emailcontroller = TextEditingController();
+  final datecontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
+  final confirmpasswordcontroller = TextEditingController();
   final _formkey = GlobalKey<FormState>();
-  final FirebaseAuth _auth=FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final numbercontroller = TextEditingController();
+  bool isPasswordHidden = false;
+  bool isConfirmPasswordHidden = false;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -54,154 +58,237 @@ class _SignupscreenState extends State<Signupscreen> {
                 key: _formkey,
                 child: Column(
                   children: [
-                   Customtextfield(
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
-                first: 'Name',
-                second: 'xxxxx',
-                controller: namecontroller,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Customtextfield(
-                        first: 'Date of birth',
-                        second: 'xxxxx',
-                        controller: birthcontroller,
-                      ),
+                    Customtextfield(
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
+                      first: 'Name',
+                      second: 'xxxxx',
+                      controller: namecontroller,
                     ),
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: selectedGender,
+                    SizedBox(height: height * 0.02),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: datecontroller,
+                              readOnly: true,
+                              decoration: const InputDecoration(
+                                hintText: 'Date of Birth',
+                                fillColor: Colors.white,
+                                filled: true,
+                                suffixIcon: Icon(Icons.calendar_today),
+                                border: OutlineInputBorder(),
+                              ),
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1950),
+                                  lastDate: DateTime.now(),
+                                );
 
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                                if (pickedDate != null) {
+                                  datecontroller.text =
+                                      '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
+                                }
+                              },
+                            ),
                           ),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        hint: const Text(' Gender'),
-                        items: const [
-                          DropdownMenuItem(value: 'Male', child: Text('Male')),
-                          DropdownMenuItem(
-                            value: 'Female',
-                            child: Text('Female'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Other',
-                            child: Text('Other'),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              value: selectedGender,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              hint: const Text('Gender'),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 'Male',
+                                  child: Text('Male'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'Female',
+                                  child: Text('Female'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'Other',
+                                  child: Text('Other'),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value;
+                                });
+                              },
+                            ),
                           ),
                         ],
-                        onChanged: (value) {
+                      ),
+                    ),
+                    SizedBox(height: height * 0.04),
+                    Customtextfield(
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please enter your number';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.number,
+                      first: 'Mobile Number',
+                      second: 'xxxxx',
+                      controller: numbercontroller,
+                    ),
+                    SizedBox(height: height * 0.02),
+
+                    Customtextfield(
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your email';
+                        }
+
+                        if (!RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                        ).hasMatch(value.trim())) {
+                          return 'Please enter a valid email';
+                        }
+
+                        return null;
+                      },
+                      first: 'Email address',
+                      second: 'XXXXXX',
+
+                      controller: emailcontroller,
+                    ),
+
+                    SizedBox(height: height * 0.02),
+                    Customtextfield(
+                      controller: passwordcontroller,
+                      obscureText: isPasswordHidden,
+                      first: 'Password',
+                      second: 'XXXXXX',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+
+                        return null;
+                      },
+                      icon: IconButton(
+                        onPressed: () {
                           setState(() {
-                            selectedGender = value;
+                            isPasswordHidden = !isPasswordHidden;
                           });
                         },
+                        icon: Icon(
+                          isPasswordHidden
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: height * 0.02),
+                    Customtextfield(
+                      controller: confirmpasswordcontroller,
+                      obscureText: isConfirmPasswordHidden,
+                      first: 'Confirm Password',
+                      second: 'XXXXXX',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please retype your password';
+                        }
+
+                        if (value != passwordcontroller.text) {
+                          return 'Passwords do not match';
+                        }
+
+                        return null;
+                      },
+                      icon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isConfirmPasswordHidden = !isConfirmPasswordHidden;
+                          });
+                        },
+                        icon: Icon(
+                          isConfirmPasswordHidden
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: height * 0.02),
+                    Custombutton(
+                      text: 'Sign Up',
+                      onTap: () {
+                        if (_formkey.currentState!.validate()) {
+                          _auth
+                              .createUserWithEmailAndPassword(
+                                email: emailcontroller.text.toString(),
+                                password: passwordcontroller.text.toString(),
+                              )
+                              .then((value) {
+                                Utils().toastmessage(
+                                  value.user!.email.toString(),
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Signupscreen(),
+                                  ),
+                                );
+                              })
+                              .onError((error, stackTrace) {
+                                Utils().toastmessage(error.toString());
+                              });
+                        }
+                      },
+                      buttoncolor: Color.fromRGBO(85, 13, 155, 1),
+                      bordercolor: Color.fromRGBO(85, 13, 155, 1),
+                      textcolor: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Already have an account?',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Loginscreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(fontSize: 16),
                       ),
                     ),
                   ],
                 ),
               ),
-              Customtextfield(
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please enter your number';
-                  }
-                  return null;
-                },
-                keyboardType: TextInputType.number,
-                first: 'Mobile Number',
-                second: 'xxxxx',
-                controller: numbercontroller,
-              ),
-              SizedBox(height: height * 0.02),
-              Customtextfield(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-
-                  return null;
-                },
-
-                first: 'Password',
-                second: 'XXXXXX',
-                icon: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.visibility),
-                ),
-                controller: passwordcontroller,
-              ),
-              Customtextfield(
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your email';
-                  }
-
-                  if (!RegExp(
-                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                  ).hasMatch(value.trim())) {
-                    return 'Please enter a valid email';
-                  }
-
-                  return null;
-                },
-                first: 'Email address',
-                second: 'XXXXXX',
-
-                controller: emailcontroller,
-              ),
-
-              Custombutton(
-                text: 'Sign Up',
-                onTap: () {
-                  if (_formkey.currentState!.validate()) {
-                    _auth
-                        .createUserWithEmailAndPassword(
-                          email: emailcontroller.text.toString(),
-                          password: passwordcontroller.text.toString(),
-                        )
-                        .then((value) {
-                          Utils().toastmessage(value.user!.email.toString());
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Addaddresspage(),
-                            ),
-                          );
-                        })
-                        .onError((error, stackTrace) {
-                          Utils().toastmessage(error.toString());
-                        });
-                  }
-                },
-                buttoncolor: Color.fromRGBO(85, 13, 155, 1),
-                bordercolor: Color.fromRGBO(85, 13, 155, 1),
-                textcolor: Colors.white,
-              ),
-              
-                  ],
-                )
-              ),
-              Row(
-                children: [
-                  Text('Already have an account?'),
-                  TextButton(onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Loginscreen()));
-                  }, child: Text('Login')),
-                ],
-              )
             ],
           ),
         ),
