@@ -1,4 +1,4 @@
-import 'package:click_me/Chat_QueueScreen/People_ChatScreen.dart';
+import 'package:click_me/view/Chat_QueueScreen/People_ChatScreen.dart';
 import 'package:flutter/material.dart';
 
 class ChatItem {
