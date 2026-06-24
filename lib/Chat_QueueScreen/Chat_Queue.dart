@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:click_me/Chat_QueueScreen/Chat_List.dart';
 import 'package:click_me/Chat_QueueScreen/group_list.dart';
+import 'package:click_me/dashboardpage/Dashboardpage.dart';
 
 class ChatQueue extends StatefulWidget {
   const ChatQueue({super.key});
@@ -10,14 +11,21 @@ class ChatQueue extends StatefulWidget {
 }
 
 class _ChatQueueState extends State<ChatQueue> {
-  int _selectedTab = 0; // 0 for People, 1 for Groups
+  int _selectedTab = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const Dashboardpage(),
+              ),
+            );
+          },
           icon: const Icon(
             Icons.arrow_back_outlined,
             color: Colors.black,
