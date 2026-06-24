@@ -1,5 +1,5 @@
 import 'package:click_me/firebase_options.dart';
-import 'package:click_me/splashscreen/SplashScreen.dart';
+import 'package:click_me/view/splashscreen/SplashScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
