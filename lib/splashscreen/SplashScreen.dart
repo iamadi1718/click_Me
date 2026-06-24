@@ -27,25 +27,21 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Custombackground(
         widget: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/splash_logo.png'),
-              SizedBox(height: height*0.05,),
-              Text('Welcome to clickME!',style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 34,
-                
-              ),)
-            ],
-          ),
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/splash_logo.png'),
+            SizedBox(height: height * 0.05),
+            Text(
+              'Welcome to clickME!',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 34),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
- 
-     

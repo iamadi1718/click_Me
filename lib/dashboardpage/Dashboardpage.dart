@@ -3,7 +3,6 @@ import 'package:click_me/bottomnavigationbar/homepage/Homepage.dart';
 import 'package:click_me/bottomnavigationbar/mediapage/Mediapage.dart';
 import 'package:click_me/bottomnavigationbar/profilepage/Profilepage.dart';
 import 'package:click_me/bottomnavigationbar/searchreels/Reelspage.dart';
-import 'package:click_me/addprofilepage/AddProfilepage.dart';
 import 'package:flutter/material.dart';
 
 class Dashboardpage extends StatefulWidget {

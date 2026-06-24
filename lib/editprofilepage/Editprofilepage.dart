@@ -1,8 +1,5 @@
-import 'package:click_me/bottomnavigationbar/profilepage/Profilepage.dart';
-import 'package:click_me/custombackground/Custombackground.dart';
 import 'package:click_me/custombutton/Custombutton.dart';
 import 'package:click_me/customtextfield/CustomTextfield.dart';
-import 'package:click_me/interestspage/Interestspage.dart';
 import 'package:click_me/settingspage/Settingspage.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +20,6 @@ class _EditprofilepagesState extends State<Editprofilepages> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(title: Text('Edit Profile')),
       body: SingleChildScrollView(
