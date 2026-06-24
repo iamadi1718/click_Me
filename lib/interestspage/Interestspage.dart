@@ -88,7 +88,12 @@ class _InterestspageState extends State<Interestspage> {
               children: [
                 SizedBox(width: width * 0.3),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Dashboardpage()),
+                    );
+                  },
                   child: Text(
                     'Skip for Now',
                     style: TextStyle(
