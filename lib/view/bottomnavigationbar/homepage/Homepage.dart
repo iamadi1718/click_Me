@@ -1,3 +1,6 @@
+import 'package:click_me/Models/Homemodel/Homemodel.dart';
+import 'package:click_me/controller/likecontroller/Likecontroller.dart';
+import 'package:click_me/services/Homeservices/Homeservices.dart';
 import 'package:click_me/view/AddStory/AddStoryCard.dart';
 import 'package:click_me/view/customposts/Customposts.dart';
 import 'package:click_me/view/customstory/Customstory.dart';
@@ -6,6 +9,7 @@ import 'package:click_me/view/Saved%20Audio/Saved_Audio.dart';
 import 'package:click_me/view/NotificationScreen/Notification.dart';
 import 'package:click_me/view/Chat_QueueScreen/Chat_Queue.dart';
 import 'package:click_me/view/settingspage/Settingspage.dart';
+import 'package:get/get.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -15,7 +19,14 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  
+   final LikeController likeController = Get.put(LikeController());
+  Future<HomeModel>? futureHome;
+  @override
+  void initState() {
+    super.initState();
+    futureHome = HomeService().getHomeData();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -149,37 +160,54 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ),
                 SizedBox(height: height * 0.03),
-                Customposts(
-                  title: 'Erica Greens',
-                  time: '5h',
-                  content:
-                      'Painted a little something today. Thought i’d share with u guys...\n show some love and comment your favorite flower in the comment\n <3',
-                  image: AssetImage('assets/images/red.jpg'),
-                  iconno: '50k+',
-                  comment: '380',
-                  send: '71',
-                ),
-                SizedBox(height: height * 0.001),
-                Customposts(
-                  title: 'Jack Hollow',
-                  time: '11h',
-                  content:
-                      'finally the justice has been served... i mean no harm obviously!',
-                  image: AssetImage('assets/images/red.jpg'),
-                  iconno: '101k+',
-                  comment: '1017',
-                  send: '18k',
-                ),
-                SizedBox(height: height * 0.03),
-                Customposts(
-                  title: 'Olive Smith',
-                  time: '13h',
-                  content:
-                      "Because women don't have to be men's equals to be considered\n contenders; they have to be better. That's the lie of it all. You have\n to be better to prove yourself worthy of being equal. Unfair!",
-                  image: AssetImage('assets/images/story2.jpg'),
-                  iconno: '102k+',
-                  comment: '456',
-                  send: '87',
+                FutureBuilder<HomeModel>(
+                  future: futureHome,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    }
+
+                    if (!snapshot.hasData) {
+                      return const Center(child: Text("No Data"));
+                    }
+
+                    final posts = snapshot.data!.data!.posts!;
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        likeController.initialize(
+  index,
+  post.likesCount ?? 0,
+);
+
+                        return Customposts(
+                          index: index,
+                          title:
+                              "${post.userId?.firstName ?? ""} ${post.userId?.lastName ?? ""}",
+
+                          time: post.createdAt ?? "",
+
+                          image: NetworkImage(
+                            "http://103.207.183.10:5000${post.media![0].url}",
+                          ),
+
+                          iconno: post.likesCount.toString(),
+
+                          comment: post.commentsCount.toString(),
+
+                          send: post.sharesCount.toString(),
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),

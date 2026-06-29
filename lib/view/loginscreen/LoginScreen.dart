@@ -138,7 +138,7 @@ class _LoginscreenState extends State<Loginscreen> {
                   },
                   child: Text(
                     'Forgotten Password?',
-                    style: TextStyle(color: Colors.white, fontSize: 15),
+                    style: TextStyle(color: Colors.white, fontSize: 17),
                   ),
                 ),
                 SizedBox(height: height * 0.1),

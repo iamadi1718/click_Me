@@ -19,7 +19,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final emailcontroller = TextEditingController();
   final phonecontroller = TextEditingController();
   @override
-  
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
 
@@ -63,18 +62,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               Custombutton(
                 text: 'Reset Link',
                 onTap: () {
-                   _auth
-                        .sendPasswordResetEmail(
-                          email: emailcontroller.text.toString(),
-                        )
-                        .then((value) {
-                          Utils().toastmessage(
-                            'We have sent you an password to check email',
-                          );
-                        })
-                        .onError((error, stackTrace) {
-                          Utils().toastmessage(error.toString());
-                        });
+                  _auth
+                      .sendPasswordResetEmail(
+                        email: emailcontroller.text.toString(),
+                      )
+                      .then((value) {
+                        Utils().toastmessage(
+                          'We have sent you an password to check email',
+                        );
+                      })
+                      .onError((error, stackTrace) {
+                        Utils().toastmessage(error.toString());
+                      });
                 },
                 buttoncolor: Color.fromRGBO(85, 13, 155, 1),
                 bordercolor: Color.fromRGBO(85, 13, 155, 1),
@@ -82,11 +81,22 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Loginscreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Loginscreen()),
+                  );
                 },
-                child: Text(
-                  'Back to Login',
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Loginscreen()),
+                    );
+                  },
+                  child: Text(
+                    'Back to Login',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ),
               ),
               SizedBox(height: height * 0.1),

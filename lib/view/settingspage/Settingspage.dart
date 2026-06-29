@@ -1,6 +1,7 @@
 import 'package:click_me/view/blockedaccounts/Manageblocked.dart';
 import 'package:click_me/view/changepasswordpage/ChangePasswordPage.dart';
-import 'package:click_me/privacypage/Privacypage.dart';
+import 'package:click_me/view/privacypage/PrivacyPage.dart';
+
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {

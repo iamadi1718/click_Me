@@ -1,5 +1,5 @@
+import 'package:click_me/view/Chat_QueueScreen/Chat_list.dart';
 import 'package:flutter/material.dart';
-import 'package:click_me/Chat_QueueScreen/Chat_List.dart';
 import 'package:click_me/view/Chat_QueueScreen/group_list.dart';
 import 'package:click_me/view/dashboardpage/Dashboardpage.dart';
 

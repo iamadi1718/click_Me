@@ -77,12 +77,14 @@ class _SignupscreenState extends State<Signupscreen> {
                             child: TextFormField(
                               controller: datecontroller,
                               readOnly: true,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: 'Date of Birth',
                                 fillColor: Colors.white,
                                 filled: true,
                                 suffixIcon: Icon(Icons.calendar_today),
-                                border: OutlineInputBorder(),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                               ),
                               onTap: () async {
                                 DateTime? pickedDate = await showDatePicker(
@@ -106,7 +108,9 @@ class _SignupscreenState extends State<Signupscreen> {
                             child: DropdownButtonFormField<String>(
                               value: selectedGender,
                               decoration: InputDecoration(
-                                border: OutlineInputBorder(),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                                 filled: true,
                                 fillColor: Colors.white,
                               ),
@@ -247,7 +251,8 @@ class _SignupscreenState extends State<Signupscreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const AddProfilepage(),
+                                    builder:
+                                        (context) => const AddProfilepage(),
                                   ),
                                 );
                               })

@@ -7,8 +7,9 @@ class Customtextfield extends StatelessWidget {
     this.first,
     required this.second,
     this.icon,
-    required this.controller, this.validator,
-     this.keyboardType
+    required this.controller,
+    this.validator,
+    this.keyboardType,
   });
   final bool obscureText;
   final String? first;
@@ -25,22 +26,27 @@ class Customtextfield extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(width: 1),
-            ),
-            child: TextFormField(
-              controller: controller,
-              obscureText: obscureText,
-              keyboardType: keyboardType,
-              validator:validator,
-              decoration: InputDecoration(
-                labelText: first,
-                hintText: second,
-                suffixIcon: icon,
-                fillColor: Colors.white,
-                filled: true,
+          TextFormField(
+            controller: controller,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            validator: validator,
+            decoration: InputDecoration(
+              labelText: first,
+              hintText: second,
+              suffixIcon: icon,
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(color: Colors.blue, width: 2),
               ),
             ),
           ),

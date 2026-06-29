@@ -20,12 +20,12 @@ class Custombutton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             color: buttoncolor,
-            border: Border.all(width: 1, color: bordercolor),
+            border: Border.all(width: 2, color: bordercolor),
           ),
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
 
@@ -34,7 +34,7 @@ class Custombutton extends StatelessWidget {
               text,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: 16,
+                fontSize: 18,
                 color: textcolor,
               ),
             ),
