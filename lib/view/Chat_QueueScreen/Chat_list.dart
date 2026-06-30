@@ -4,6 +4,7 @@ import 'package:click_me/view/Chat_QueueScreen/People_ChatScreen.dart';
 import 'package:click_me/view/utils/Api.dart';
 import 'package:click_me/view/utils/Time.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ChatItem {
   final String name;
@@ -71,17 +72,12 @@ class _ChatListState extends State<ChatList> {
               borderRadius: BorderRadius.circular(12),
               onTap: () {
                 print("Thread ID: ${thread.id}");
-               Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => PeopleChatScreen(
-      chatName:
-          "${thread.participant?.firstName ?? ""} ${thread.participant?.lastName ?? ""}",
-      threadId: thread.id!,
-       receiverId: thread.participant!.id!,
-    ),
-  ),
-); },
+               Get.to(() => PeopleChatScreen(
+                 chatName:
+                     "${thread.participant?.firstName ?? ""} ${thread.participant?.lastName ?? ""}",
+                 threadId: thread.id!,
+                  receiverId: thread.participant!.id!,
+               )); },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 child: Row(

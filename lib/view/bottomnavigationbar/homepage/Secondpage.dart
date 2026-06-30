@@ -2,6 +2,7 @@ import 'package:click_me/view/bottomnavigationbar/homepage/Postspage.dart';
 import 'package:click_me/view/bottomnavigationbar/homepage/Reelspage.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Secondpage extends StatefulWidget {
   const Secondpage({super.key});
@@ -29,7 +30,7 @@ class _SecondpageState extends State<Secondpage> {
                   child: Row(
                     children: [
                       IconButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Get.back(),
                         icon: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
       

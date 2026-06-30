@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CallScreen extends StatefulWidget {
   final String chatName;
@@ -32,7 +33,7 @@ class _CallScreenState extends State<CallScreen> {
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                   ),
                   const SizedBox(width: 8),
@@ -169,7 +170,7 @@ class _CallScreenState extends State<CallScreen> {
                                 // End Call Button
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Get.back();
                                   },
                                   child: Container(
                                     width: 64,

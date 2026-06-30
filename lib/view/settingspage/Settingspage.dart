@@ -1,18 +1,16 @@
+import 'package:click_me/controller/likecontroller/settings_controller.dart';
 import 'package:click_me/view/blockedaccounts/Manageblocked.dart';
 import 'package:click_me/view/changepasswordpage/ChangePasswordPage.dart';
 import 'package:click_me/view/privacypage/PrivacyPage.dart';
-
+import 'package:click_me/data/services/local/storage_services.dart';
+import 'package:click_me/view/loginscreen/LoginScreen.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+class SettingsPage extends StatelessWidget {
+  SettingsPage({super.key});
 
-  @override
-  State<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
-  bool isDark = false;
+  final controller = Get.put(SettingsController());
 
   Widget settingTile({
     required String title,
@@ -58,39 +56,28 @@ class _SettingsPageState extends State<SettingsPage> {
             settingTile(
               title: 'Manage blocked accounts',
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Manageblocked()),
-                );
+                Get.to(() => Manageblocked());
               },
             ),
             settingTile(
               title: 'Change Password',
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChangePasswordPage()),
-                );
+                Get.to(() => ChangePasswordPage());
               },
             ),
-            settingTile(
-              title: 'App Theme',
-              trailing: Switch(
-                value: isDark,
-                onChanged: (value) {
-                  setState(() {
-                    isDark = value;
-                  });
-                },
+            Obx(
+              () => settingTile(
+                title: 'App Theme',
+                trailing: Switch(
+                  value: controller.isDark.value,
+                  onChanged: controller.toggleTheme,
+                ),
               ),
             ),
             settingTile(
               title: 'Privacy Preferences',
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PrivacyPage()),
-                );
+                Get.to(() => PrivacyPage());
               },
             ),
             const SizedBox(height: 20),
@@ -108,7 +95,10 @@ class _SettingsPageState extends State<SettingsPage> {
               title: 'Log out',
               textColor: Colors.red,
               trailing: const Icon(Icons.logout, color: Colors.red),
-              onTap: () {},
+              onTap: () async {
+                await StorageService.clear();
+                Get.offAll(() => Loginscreen());
+              },
             ),
           ],
         ),

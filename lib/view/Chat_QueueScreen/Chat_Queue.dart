@@ -1,5 +1,6 @@
 import 'package:click_me/view/Chat_QueueScreen/Chat_list.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:click_me/view/Chat_QueueScreen/group_list.dart';
 import 'package:click_me/view/dashboardpage/Dashboardpage.dart';
 
@@ -19,12 +20,7 @@ class _ChatQueueState extends State<ChatQueue> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const Dashboardpage(),
-              ),
-            );
+            Get.off(() => Dashboardpage());
           },
           icon: const Icon(
             Icons.arrow_back_outlined,

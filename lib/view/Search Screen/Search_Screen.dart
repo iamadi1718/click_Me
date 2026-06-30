@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:click_me/controller/likecontroller/search_screen_controller.dart';
 import 'package:click_me/view/Search%20Screen/People_Search_Screen.dart';
 import 'package:click_me/view/Search%20Screen/Reel_Search_Screen.dart';
 import 'Post_Pages_Search_Screen.dart';
@@ -13,60 +15,26 @@ class SearchScreen extends StatefulWidget {
 class SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final TextEditingController _searchController = TextEditingController(
-    text: 'word',
-  );
-  String _searchQuery = 'word';
-  bool _isPeopleSelected = false;
-
-  final List<SearchItem> _peopleItems = [
-    SearchItem(title: "Word", isSearchIcon: true),
-    SearchItem(title: "Word_word", isSearchIcon: true),
-    SearchItem(title: "worrrd", isSearchIcon: true),
-    SearchItem(title: "wooord", isSearchIcon: true),
-    SearchItem(title: "wordddd", isSearchIcon: true),
-    SearchItem(
-      title: "word_in",
-      isSearchIcon: true,
-      imagePath: "assets/images/cc6d85fb0ebb0b4e9e7af266f103ae3421c66c1a.jpg",
-    ),
-  ];
+  final controller = Get.put(SearchScreenController());
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    controller.tabController = _tabController;
     _tabController.addListener(() {
       if (_tabController.index != 0) {
-        setState(() {
-          _isPeopleSelected = false;
-        });
+        controller.isPeopleSelected.value = false;
       } else {
-        setState(() {});
+        // Let user toggle people vs suggestions if needed
       }
-    });
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text;
-      });
     });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _searchController.dispose();
     super.dispose();
-  }
-
-  List<SearchItem> _getFilteredItems(List<SearchItem> items) {
-    if (_searchQuery.isEmpty) return items;
-    return items
-        .where(
-          (item) =>
-              item.title.toLowerCase().contains(_searchQuery.toLowerCase()),
-        )
-        .toList();
   }
 
   @override
@@ -91,7 +59,7 @@ class SearchScreenState extends State<SearchScreen>
                       size: 28,
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                   ),
                   Expanded(
@@ -109,7 +77,7 @@ class SearchScreenState extends State<SearchScreen>
                           const SizedBox(width: 8),
                           Expanded(
                             child: TextField(
-                              controller: _searchController,
+                              controller: controller.searchController,
                               style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.black,
@@ -129,15 +97,19 @@ class SearchScreenState extends State<SearchScreen>
                               ),
                             ),
                           ),
-                          if (_searchController.text.isNotEmpty)
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              icon: const Icon(Icons.clear, color: Colors.grey),
-                              onPressed: () {
-                                _searchController.clear();
-                              },
-                            ),
+                          Obx(() {
+                            if (controller.searchQuery.value.isNotEmpty) {
+                              return IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                icon: const Icon(Icons.clear, color: Colors.grey),
+                                onPressed: () {
+                                  controller.searchController.clear();
+                                },
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
                           const SizedBox(width: 8),
                         ],
                       ),
@@ -147,18 +119,14 @@ class SearchScreenState extends State<SearchScreen>
               ),
             ),
 
-            TabBar(
+            Obx(() => TabBar(
               controller: _tabController,
               indicatorColor: Colors.transparent,
               onTap: (index) {
                 if (index == 0) {
-                  setState(() {
-                    _isPeopleSelected = true;
-                  });
+                  controller.isPeopleSelected.value = true;
                 } else {
-                  setState(() {
-                    _isPeopleSelected = false;
-                  });
+                  controller.isPeopleSelected.value = false;
                 }
               },
               tabs: [
@@ -166,12 +134,12 @@ class SearchScreenState extends State<SearchScreen>
                   child: Text(
                     "People",
                     style: TextStyle(
-                      color:
-                          _isPeopleSelected
-                              ? const Color(0xff550D9B)
-                              : Colors.grey[600],
-                      fontWeight:
-                          _isPeopleSelected ? FontWeight.w500 : FontWeight.w400,
+                      color: controller.isPeopleSelected.value
+                          ? const Color(0xff550D9B)
+                          : Colors.grey[600],
+                      fontWeight: controller.isPeopleSelected.value
+                          ? FontWeight.w500
+                          : FontWeight.w400,
                       fontSize: 15,
                       fontFamily: 'Inter',
                     ),
@@ -181,14 +149,12 @@ class SearchScreenState extends State<SearchScreen>
                   child: Text(
                     "Reels",
                     style: TextStyle(
-                      color:
-                          _tabController.index == 1
-                              ? const Color(0xff550D9B)
-                              : Colors.grey[600],
-                      fontWeight:
-                          _tabController.index == 1
-                              ? FontWeight.w500
-                              : FontWeight.w400,
+                      color: _tabController.index == 1
+                          ? const Color(0xff550D9B)
+                          : Colors.grey[600],
+                      fontWeight: _tabController.index == 1
+                          ? FontWeight.w500
+                          : FontWeight.w400,
                       fontSize: 15,
                       fontFamily: 'Inter',
                     ),
@@ -198,36 +164,34 @@ class SearchScreenState extends State<SearchScreen>
                   child: Text(
                     "Posts/Pages",
                     style: TextStyle(
-                      color:
-                          _tabController.index == 2
-                              ? const Color(0xff550D9B)
-                              : Colors.grey[600],
-                      fontWeight:
-                          _tabController.index == 2
-                              ? FontWeight.w500
-                              : FontWeight.w400,
+                      color: _tabController.index == 2
+                          ? const Color(0xff550D9B)
+                          : Colors.grey[600],
+                      fontWeight: _tabController.index == 2
+                          ? FontWeight.w500
+                          : FontWeight.w400,
                       fontSize: 15,
                       fontFamily: 'Inter',
                     ),
                   ),
                 ),
               ],
-            ),
+            )),
 
             const Divider(height: 1, thickness: 1, color: Color(0xFFE5E5E5)),
 
             Expanded(
-              child: TabBarView(
+              child: Obx(() => TabBarView(
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _isPeopleSelected
-                      ? PeopleScreen(searchQuery: _searchQuery)
-                      : _buildResultsList(_peopleItems),
+                  controller.isPeopleSelected.value
+                      ? PeopleScreen(searchQuery: controller.searchQuery.value)
+                      : _buildResultsList(controller.peopleItems),
                   const ReelScreen(),
                   const PostPagesSearchScreen(),
                 ],
-              ),
+              )),
             ),
           ],
         ),
@@ -236,7 +200,7 @@ class SearchScreenState extends State<SearchScreen>
   }
 
   Widget _buildResultsList(List<SearchItem> items) {
-    final filtered = _getFilteredItems(items);
+    final filtered = controller.getFilteredItems(items);
     if (filtered.isEmpty) {
       return Center(
         child: Column(
@@ -245,7 +209,7 @@ class SearchScreenState extends State<SearchScreen>
             Icon(Icons.search_off_rounded, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              "No results found for '$_searchQuery'",
+              "No results found for '${controller.searchQuery.value}'",
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
@@ -260,8 +224,8 @@ class SearchScreenState extends State<SearchScreen>
         final item = filtered[index];
         return InkWell(
           onTap: () {
-            _searchController.text = item.title;
-            _searchController.selection = TextSelection.fromPosition(
+            controller.searchController.text = item.title;
+            controller.searchController.selection = TextSelection.fromPosition(
               TextPosition(offset: item.title.length),
             );
           },

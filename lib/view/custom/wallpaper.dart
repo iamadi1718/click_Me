@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class WallpaperModel {
   final String name;
@@ -74,7 +75,7 @@ class WallpaperDialog extends StatelessWidget {
                     return InkWell(
                       onTap: () {
                         WallpaperManager.changeWallpaper(wallpaper);
-                        Navigator.pop(context);
+                        Get.back();
                       },
                       borderRadius: BorderRadius.circular(12),
                       child: Padding(

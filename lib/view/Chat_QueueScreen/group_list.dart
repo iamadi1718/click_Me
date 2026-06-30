@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:click_me/view/Chat_QueueScreen/Group_ChatScreen.dart';
 
 class GroupItem {
@@ -87,12 +88,7 @@ class GroupList extends StatelessWidget {
         return InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GroupChatScreen(groupName: group.name),
-              ),
-            );
+            Get.to(() => GroupChatScreen(groupName: group.name));
           },
           child: Row(
             children: [

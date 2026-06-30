@@ -1,6 +1,5 @@
 import 'package:click_me/Models/Followersmodel/FollowersModel.dart';
 import 'package:click_me/services/FollowersServices/FollowersServices.dart';
-import 'package:click_me/view/customfriends/Customfriends.dart';
 import 'package:flutter/material.dart';
 
 class FriendsScreen extends StatefulWidget {

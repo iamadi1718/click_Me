@@ -1,5 +1,6 @@
 import 'package:click_me/view/followRequests/FollowRequests.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:click_me/view/NotificationScreen/Notification_Detail_Screen.dart';
 
 class NotificationScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class NotificationScreen extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
               },
               icon: const Icon(Icons.arrow_back, color: Colors.black),
             ),
@@ -43,7 +44,7 @@ class NotificationScreen extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowRequestsScreen()));
+              Get.to(() => FollowRequestsScreen());
             },
             child: ListTile(
               contentPadding: EdgeInsets.zero,

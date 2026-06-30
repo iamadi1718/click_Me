@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:click_me/view/custom/Message_Bubble.dart';
 import 'package:click_me/view/custom/Chat_message.dart';
 import 'package:click_me/view/custom/chat_background.dart';
@@ -20,7 +21,7 @@ class GroupChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
             },
             icon: const Icon(Icons.arrow_back, color: Colors.black, size: 30),
           ),

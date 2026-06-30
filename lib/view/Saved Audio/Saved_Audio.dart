@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SavedAudioItem {
   final String id;
@@ -84,7 +85,7 @@ class _SavedAudioState extends State<SavedAudio> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
           icon: const Icon(
             Icons.arrow_back_outlined,

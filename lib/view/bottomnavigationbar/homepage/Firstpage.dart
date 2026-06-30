@@ -9,6 +9,10 @@ import 'package:click_me/view/customstory/Customstory.dart';
 import 'package:click_me/view/utils/Api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:click_me/data/services/local/storage_services.dart';
+import 'package:click_me/view/storyview/story_view_screen.dart';
+import 'package:click_me/services/Profileservices/Profileservices.dart';
+import 'package:click_me/Models/ProfileModel/ProfileModel.dart';
 
 class Firstpage extends StatefulWidget {
   const Firstpage({super.key});
@@ -21,11 +25,13 @@ class _FirstpageState extends State<Firstpage> {
   final LikeController likeController = Get.put(LikeController());
   Future<HomeModel>? futureHome;
   Future<StoryModel>? futureStory;
+  Future<ProfileModel>? futureProfile;
   @override
   void initState() {
     super.initState();
     futureHome = HomeService().getHomeData();
     futureStory = StoryService().getStoryData();
+    futureProfile = ProfileService().getProfileData();
   }
 
   @override
@@ -33,13 +39,14 @@ class _FirstpageState extends State<Firstpage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0),
           child: Divider(thickness: 2),
         ),
-        FutureBuilder<StoryModel>(
-          future: futureStory,
+        FutureBuilder<List<dynamic>>(
+          future: Future.wait([futureStory!, futureProfile!]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox(
@@ -56,24 +63,45 @@ class _FirstpageState extends State<Firstpage> {
             }
 
             if (!snapshot.hasData ||
-                snapshot.data!.data == null ||
-                snapshot.data!.data!.stories == null) {
+                snapshot.data![0] == null) {
               return const SizedBox(
                 height: 196,
                 child: Center(child: Text("No Stories")),
               );
             }
 
-            final users = snapshot.data!.data!.stories!;
+            final storyData = snapshot.data![0] as StoryModel;
+            final profileData = snapshot.data![1] as ProfileModel;
+
+            if (storyData.data == null || storyData.data!.stories == null) {
+              return const SizedBox(
+                height: 196,
+                child: Center(child: Text("No Stories")),
+              );
+            }
+
+            final users = storyData.data!.stories!;
+            final currentUserId = profileData.data?.id ?? StorageService.getUserId();
+
+            StoryUser? currentUserStory;
+            final otherUsers = <StoryUser>[];
+            for (var u in users) {
+              if (u.user?.id == currentUserId) {
+                currentUserStory = u;
+              } else {
+                otherUsers.add(u);
+              }
+            }
 
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  Addstorycard(),
+                  const SizedBox(width: 10),
+                  Addstorycard(currentUserStory: currentUserStory),
                   SizedBox(width: width * 0.05),
 
-                  ...users.expand((user) {
+                  ...otherUsers.expand((user) {
                     return user.stories!.map((story) {
                       return Padding(
                         padding: EdgeInsets.only(right: width * 0.05),
@@ -86,6 +114,15 @@ class _FirstpageState extends State<Firstpage> {
                           ),
                           text:
                               "${user.user?.firstName ?? ""} ${user.user?.lastName ?? ""}",
+                          onTap: () {
+                            Get.to(() => StoryViewScreen(
+                                  mediaUrl: "${Api.baseUrl}${story.media?.url}",
+                                  username: "${user.user?.firstName ?? ""} ${user.user?.lastName ?? ""}",
+                                  profileImage: "${Api.baseUrl}${user.user?.profilePicture}",
+                                  caption: story.caption,
+                                  timeAgo: "Just now",
+                                ));
+                          },
                         ),
                       );
                     });
