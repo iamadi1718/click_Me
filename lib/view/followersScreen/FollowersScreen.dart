@@ -1,17 +1,16 @@
 import 'package:click_me/Models/Followersmodel/FollowersModel.dart';
 import 'package:click_me/services/FollowersServices/FollowersServices.dart';
-import 'package:click_me/view/customfriends/Customfriends.dart';
 import 'package:flutter/material.dart';
 
-class FriendsScreen extends StatefulWidget {
-  const FriendsScreen({super.key});
+class FollowersScreen extends StatefulWidget {
+  const FollowersScreen({super.key});
 
   @override
-  State<FriendsScreen> createState() => _FriendsScreenState();
+  State<FollowersScreen> createState() => _FollowersScreenState();
 }
 
-class _FriendsScreenState extends State<FriendsScreen> {
-  late Future<FollowersModel> friendsFuture;
+class _FollowersScreenState extends State<FollowersScreen> {
+  late Future<FollowersModel> followersFuture;
 
   // Replace with your image base URL
   final String imageBaseUrl = "https://your-domain.com";
@@ -19,17 +18,17 @@ class _FriendsScreenState extends State<FriendsScreen> {
   @override
   void initState() {
     super.initState();
-    friendsFuture = FollowersService().getFollowersData();
+    followersFuture = FollowersService().getFollowersData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Friends"),
+        title: const Text("Followers"),
       ),
       body: FutureBuilder<FollowersModel>(
-        future: friendsFuture,
+        future: followersFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -51,7 +50,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
             );
           }
 
-          List<Followers> friends =
+          List<Followers> followers =
               snapshot.data!.data!.followers!;
 
           return Column(
@@ -76,9 +75,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
               /// Followers List
               Expanded(
                 child: ListView.builder(
-                  itemCount: friends.length,
+                  itemCount: followers.length,
                   itemBuilder: (context, index) {
-                    final user = friends[index];
+                    final user = followers[index];
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(

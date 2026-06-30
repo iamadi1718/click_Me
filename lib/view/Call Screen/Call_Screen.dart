@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class CallScreen extends StatefulWidget {
   final String chatName;
+  final String callId;
+  final String callType;
 
-  const CallScreen({super.key, required this.chatName});
+  const CallScreen({super.key, required this.chatName, required this.callId, required this.callType});
 
   @override
   State<CallScreen> createState() => _CallScreenState();
@@ -43,6 +45,8 @@ class _CallScreenState extends State<CallScreen> {
                       fontFamily: 'Inter',
                     ),
                   ),
+                  Text("Call Type: ${widget.callType}"),
+    Text("Call ID: ${widget.callId}"),
                 ],
               ),
             ),

@@ -24,38 +24,43 @@ class _SavedwidgetState extends State<Savedwidget> {
     itemBuilder: (context, index) {
       final collection = collections[index];
 
-      return Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 10,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey,
+      return InkWell(
+        onTap: () {
+          
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15,
+            vertical: 10,
           ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                collection.image,
-                width: 55,
-                height: 55,
-                fit: BoxFit.cover,
-              ),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                collection.title,
-                style: const TextStyle(
-                  fontSize: 18,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  collection.image,
+                  width: 55,
+                  height: 55,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  collection.title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     },

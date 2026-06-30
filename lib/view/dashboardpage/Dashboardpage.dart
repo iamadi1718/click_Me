@@ -1,8 +1,8 @@
 import 'package:click_me/view/bottomnavigationbar/friendspage/Friendspage.dart';
 import 'package:click_me/view/bottomnavigationbar/homepage/Homepage.dart';
+import 'package:click_me/view/bottomnavigationbar/homepage/Reelspage.dart';
 import 'package:click_me/view/bottomnavigationbar/mediapage/Mediapage.dart';
 import 'package:click_me/view/bottomnavigationbar/profilepage/Profilepage.dart';
-import 'package:click_me/view/bottomnavigationbar/searchreels/Reelspage.dart';
 import 'package:flutter/material.dart';
 
 class Dashboardpage extends StatefulWidget {
@@ -16,10 +16,10 @@ class _DashboardpageState extends State<Dashboardpage> {
   int selectedindex = 0;
   final List<Widget> pages = [
     Homepage(),
-    Friendspage(),
+    FriendsScreen(),
     Mediapage(),
 
-    Reelspage(),
+    ReelsScreen(),
     Profilepage(),
   ];
   @override

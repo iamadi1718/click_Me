@@ -1,7 +1,12 @@
+import 'package:click_me/services/Profileservices/Profileservices.dart';
 import 'package:click_me/view/editprofilepage/Editprofilepage.dart';
+import 'package:click_me/view/followersScreen/FollowersScreen.dart';
+import 'package:click_me/view/followingScreen.dart/FollowingScreen.dart';
 import 'package:click_me/view/postswidget/Postswidget.dart';
 import 'package:click_me/view/savedwidget/Savedwidget.dart';
 import 'package:flutter/material.dart';
+import 'package:click_me/Models/ProfileModel/ProfileModel.dart';
+import 'package:click_me/view/utils/Api.dart';
 
 class Profilepage extends StatefulWidget {
   const Profilepage({super.key});
@@ -11,6 +16,13 @@ class Profilepage extends StatefulWidget {
 }
 
 class _ProfilepageState extends State<Profilepage> {
+  Future<ProfileModel>? futureProfile;
+  @override
+  void initState() {
+    super.initState();
+    futureProfile = ProfileService().getProfileData();
+  }
+
   int selectedtab = 0;
   Color color = Colors.black;
   @override
@@ -20,166 +32,223 @@ class _ProfilepageState extends State<Profilepage> {
 
     return Scaffold(
       appBar: AppBar(title: Text('Profile')),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      body: FutureBuilder(
+        future: futureProfile,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.data == null) {
+            return const Center(child: Text("No Profile Found"));
+          }
+
+          final profile = snapshot.data!.data!;
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/profiles.jpg'),
-                  radius: 40,
-                ),
-                SizedBox(width: width * 0.04),
-                Column(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      'Username',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                    CircleAvatar(
+                      radius: 42,
+                      backgroundImage: NetworkImage(
+                        "${Api.baseUrl}${profile.profileImage}",
                       ),
                     ),
-                    Row(
-                      children: [
-                        _profilestat('5', 'Posts'),
-                        _profilestat('250', 'Followers'),
-                        _profilestat('300', 'Following'),
-                      ],
+
+                    const SizedBox(width: 20),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            profile.username ?? "",
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _profilestat(
+                                profile.totalPosts.toString(),
+                                "Posts",
+                                () {},
+                              ),
+                              _profilestat(
+                                profile.followersCount.toString(),
+                                "Followers",
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const FollowersScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              _profilestat(
+                                profile.followingCount.toString(),
+                                "Following",
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const FollowingScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ],
-            ),
-            SizedBox(height: height * 0.02),
-            Text(
-              'Full Name',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            Text(
-              'Bio would be shown here along with\n any links that user adds ',
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text('Link', style: TextStyle(color: Colors.blueAccent)),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Editprofilepages()),
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 1,
-                    color: Color.fromRGBO(114, 111, 220, 1),
+                SizedBox(height: height * 0.02),
+                Text(
+                  "${profile.firstName ?? ""} ${profile.lastName ?? ""}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'Edit Profile',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Color.fromRGBO(114, 111, 220, 1),
+                Text(profile.bio ?? ""),
+                SizedBox(height: height * 0.03),
+
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Editprofilepages(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          width: 1,
+                          color: Color.fromRGBO(114, 111, 220, 1),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Edit Profile',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromRGBO(114, 111, 220, 1),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: height * 0.01),
-            CircleAvatar(radius: 26, child: Center(child: Icon(Icons.add))),
-            Text('highlights'),
-            Divider(thickness: 1),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
+                SizedBox(height: height * 0.01),
+                InkWell(
                   onTap: () {
-                    setState(() {});
-                    selectedtab = 0;
+                    
                   },
-                  child: Icon(
-                    Icons.grid_view,
-                    size: 34,
-                    color:
-                        selectedtab == 0
-                            ? Color.fromRGBO(85, 13, 155, 1)
-                            : Colors.black,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {});
-                    selectedtab = 1;
-                  },
+                  child: CircleAvatar(radius: 26, child: Center(child: Icon(Icons.add)))),
+                Text('highlights'),
+                Divider(thickness: 1),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {});
+                        selectedtab = 0;
+                      },
+                      child: Icon(
+                        Icons.grid_view,
+                        size: 34,
+                        color:
+                            selectedtab == 0
+                                ? Color.fromRGBO(85, 13, 155, 1)
+                                : Colors.black,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {});
+                        selectedtab = 1;
+                      },
 
-                  child: Icon(
-                    Icons.movie_creation_outlined,
-                    size: 34,
-                    color:
-                        selectedtab == 1
-                            ? Color.fromRGBO(85, 13, 155, 1)
-                            : Colors.black,
-                  ),
+                      child: Icon(
+                        Icons.movie_creation_outlined,
+                        size: 34,
+                        color:
+                            selectedtab == 1
+                                ? Color.fromRGBO(85, 13, 155, 1)
+                                : Colors.black,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {});
+                        selectedtab = 2;
+                      },
+                      child: Icon(
+                        Icons.person_add_alt_1_outlined,
+                        size: 34,
+                        color:
+                            selectedtab == 2
+                                ? Color.fromRGBO(85, 13, 155, 1)
+                                : Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {});
-                    selectedtab = 2;
-                  },
-                  child: Icon(
-                    Icons.person_add_alt_1_outlined,
-                    size: 34,
-                    color:
-                        selectedtab == 2
-                            ? Color.fromRGBO(85, 13, 155, 1)
-                            : Colors.black,
-                  ),
+                Divider(thickness: 1),
+                Expanded(
+                  child:
+                      selectedtab == 0
+                          ? Postswidget()
+                          : selectedtab == 1
+                          ? Savedwidget()
+                          : Postswidget(),
                 ),
               ],
             ),
-            Divider(thickness: 1),
-            Expanded(
-              child:
-                  selectedtab == 0
-                      ? Postswidget()
-                      : selectedtab == 1
-                      ? Savedwidget()
-                      : Postswidget(),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
 
-Widget _profilestat(String num, String stats) {
-  return Row(
-    children: [
-      Column(
-        children: [
-          Text(
-            num,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
-          ),
-          Text(
-            stats,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-              color: Color.fromRGBO(115, 113, 113, 1),
-            ),
-          ),
-        ],
-      ),
-      SizedBox(width: 20),
-    ],
+Widget _profilestat(String value, String title, VoidCallback? onTaps) {
+  return InkWell(
+    onTap: onTaps,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        Text(title, style: const TextStyle(fontSize: 15, color: Colors.black)),
+      ],
+    ),
   );
 }

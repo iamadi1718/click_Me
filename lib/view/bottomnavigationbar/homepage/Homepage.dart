@@ -1,9 +1,11 @@
 import 'package:click_me/Models/Homemodel/Homemodel.dart';
+import 'package:click_me/Models/Storymodel/Storymodel.dart';
 import 'package:click_me/controller/likecontroller/Likecontroller.dart';
 import 'package:click_me/services/Homeservices/Homeservices.dart';
-import 'package:click_me/view/AddStory/AddStoryCard.dart';
-import 'package:click_me/view/customposts/Customposts.dart';
-import 'package:click_me/view/customstory/Customstory.dart';
+import 'package:click_me/services/Storyservices/Storyservices.dart';
+import 'package:click_me/view/bottomnavigationbar/homepage/Firstpage.dart';
+import 'package:click_me/view/bottomnavigationbar/homepage/Secondpage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:click_me/view/Saved%20Audio/Saved_Audio.dart';
 import 'package:click_me/view/NotificationScreen/Notification.dart';
@@ -19,13 +21,17 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-   final LikeController likeController = Get.put(LikeController());
+  final LikeController likeController = Get.put(LikeController());
   Future<HomeModel>? futureHome;
+  Future<StoryModel>? futureStory;
   @override
   void initState() {
     super.initState();
     futureHome = HomeService().getHomeData();
+    futureStory = StoryService().getStoryData();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +121,15 @@ class _HomepageState extends State<Homepage> {
                       color: Color.fromRGBO(222, 222, 222, 1),
                     ),
                     child: TextField(
+                     
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Secondpage(),
+                          ),
+                        );
+                      },
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top: 10),
                         prefixIcon: Icon(Icons.search),
@@ -124,91 +139,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10.0,
-                    horizontal: 0,
-                  ),
-                  child: Divider(thickness: 2),
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      Addstorycard(),
-                      SizedBox(width: width * 0.05),
-                      Customstory(
-                        bgimage: AssetImage('assets/images/story2.jpg'),
-                        text: 'Erica Greens',
-                      ),
-                      SizedBox(width: width * 0.05),
-                      Customstory(
-                        bgimage: AssetImage('assets/images/red.jpg'),
-                        text: 'Olive Smith',
-                      ),
-                      SizedBox(width: width * 0.05),
-                      Customstory(
-                        bgimage: AssetImage('assets/images/story2.jpg'),
-                        text: 'Erica Greens',
-                      ),
-                      SizedBox(width: width * 0.05),
-                      Customstory(
-                        bgimage: AssetImage('assets/images/red.jpg'),
-                        text: 'Olive Smith',
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: height * 0.03),
-                FutureBuilder<HomeModel>(
-                  future: futureHome,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (snapshot.hasError) {
-                      return Center(child: Text(snapshot.error.toString()));
-                    }
-
-                    if (!snapshot.hasData) {
-                      return const Center(child: Text("No Data"));
-                    }
-
-                    final posts = snapshot.data!.data!.posts!;
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        final post = posts[index];
-                        likeController.initialize(
-  index,
-  post.likesCount ?? 0,
-);
-
-                        return Customposts(
-                          index: index,
-                          title:
-                              "${post.userId?.firstName ?? ""} ${post.userId?.lastName ?? ""}",
-
-                          time: post.createdAt ?? "",
-
-                          image: NetworkImage(
-                            "http://103.207.183.10:5000${post.media![0].url}",
-                          ),
-
-                          iconno: post.likesCount.toString(),
-
-                          comment: post.commentsCount.toString(),
-
-                          send: post.sharesCount.toString(),
-                        );
-                      },
-                    );
-                  },
-                ),
+                 Firstpage()
               ],
             ),
           ),

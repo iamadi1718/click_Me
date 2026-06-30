@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Customstory extends StatefulWidget {
-  const Customstory({super.key, required this.bgimage, required this.text});
+  const Customstory({super.key, required this.bgimage, required this.text,required this.profileImage});
   final ImageProvider bgimage;
   final String text;
+  final ImageProvider profileImage;
 
   @override
   State<Customstory> createState() => _CustomstoryState();
@@ -31,7 +32,7 @@ class _CustomstoryState extends State<Customstory> {
           left: 10,
           child: CircleAvatar(
             radius: 20,
-            backgroundImage: AssetImage('assets/images/profile.jpg'),
+            backgroundImage:  widget.profileImage,
           ),
         ),
         Positioned(

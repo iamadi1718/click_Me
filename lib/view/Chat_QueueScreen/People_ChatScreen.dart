@@ -1,3 +1,6 @@
+import 'package:click_me/Models/ChatMessagesModel/ChatMessageModel.dart';
+import 'package:click_me/services/CallServices/CallServices.dart';
+import 'package:click_me/services/ChatDetailsServices/ChatDetailsServices.dart';
 import 'package:flutter/material.dart';
 import 'package:click_me/view/custom/Message_Bubble.dart';
 import 'package:click_me/view/Call%20Screen/Call_Screen.dart';
@@ -7,15 +10,25 @@ import 'package:click_me/view/custom/wallpaper.dart';
 
 class PeopleChatScreen extends StatefulWidget {
   final String chatName;
+  final String threadId;
+  final String receiverId;
 
-  const PeopleChatScreen({super.key, required this.chatName});
+  const PeopleChatScreen({super.key, required this.chatName, required this.threadId, required this.receiverId});
 
   @override
   State<PeopleChatScreen> createState() => _PeopleChatScreenState();
 }
 
 class _PeopleChatScreenState extends State<PeopleChatScreen> {
+  Future<ChatMessageModel>? futureMessages;
   final TextEditingController messageController = TextEditingController();
+  @override
+void initState() {
+  super.initState();
+
+  futureMessages =
+      ChatMessageService().getMessages(widget.threadId);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -96,30 +109,56 @@ class _PeopleChatScreenState extends State<PeopleChatScreen> {
                 const SizedBox(width: 10),
 
                 IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CallScreen(
-                          chatName: widget.chatName,
-                        ),
-                      ),
-                    );
-                  },
+                  onPressed: () async {
+  try {
+    final response = await CallService().requestCall(
+      receiverId: widget.receiverId,
+      callType: "audio",
+    );
+
+    if (response.success == true) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CallScreen(
+            chatName: widget.chatName,
+            callId: response.data!.callId!,
+  callType: response.data!.callType!,
+          ),
+        ),
+      );
+    }
+  } catch (e) {
+    print(e);
+  }
+},
                   icon: const Icon(Icons.call_outlined, size: 32),
                 ),
 
                 IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CallScreen(
-                          chatName: widget.chatName,
-                        ),
-                      ),
-                    );
-                  },
+                  onPressed: () async {
+  try {
+    final response = await CallService().requestCall(
+      receiverId: widget.receiverId,
+      callType: "video",
+    );
+
+    if (response.success == true) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CallScreen(
+            chatName: widget.chatName,
+            callId: response.data!.callId!,
+  callType: response.data!.callType!,
+          ),
+        ),
+      );
+    }
+  } catch (e) {
+    print(e);
+  }
+},
                   icon: const Icon(Icons.videocam_outlined, size: 32),
                 ),
               ],
@@ -131,23 +170,49 @@ class _PeopleChatScreenState extends State<PeopleChatScreen> {
       body: ChatBackground(
         child: Column(
           children: [
-            Expanded(
-              child: ListView(
-                reverse: true,
-                padding: const EdgeInsets.all(16),
-                children: const [
-                  MessageBubble(message: "Received message here", isMe: true),
+           Expanded(
+  child: FutureBuilder<ChatMessageModel>(
+    future: futureMessages,
+    builder: (context, snapshot) {
 
-                  MessageBubble(message: "How are you?", isMe: true),
+      if (snapshot.connectionState ==
+          ConnectionState.waiting) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
 
-                  MessageBubble(message: "I am fine", isMe: false),
+      if (snapshot.hasError) {
+        return Center(
+          child: Text(snapshot.error.toString()),
+        );
+      }
 
-                  MessageBubble(message: "Sent message here", isMe: false),
-                ],
-              ),
-            ),
+      final messages =
+          snapshot.data?.data?.messages ?? [];
 
-            ChatInputField(
+      return ListView.builder(
+        reverse: true,
+        padding: const EdgeInsets.all(16),
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+
+          final message =
+              messages[messages.length - 1 - index];
+
+          return MessageBubble(
+            message: message.text ?? "",
+
+       
+            isMe: message.senderId?.id ==
+                "6a33d1ada6d326341a9c10f4",
+          );
+        },
+      );
+    },
+  ),
+),
+ ChatInputField(
               controller: messageController,
               onSend: () {
                 print(messageController.text);

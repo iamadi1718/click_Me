@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-import 'package:click_me/Models/Homemodel/Homemodel.dart';
+import 'package:click_me/Models/PostsModel/PostsModel.dart';
 import 'package:click_me/view/utils/Api.dart';
 import 'package:http/http.dart' as http;
 
-class HomeService {
-  Future<HomeModel> getHomeData() async {
+class PostsService {
+  Future<PostsModel> getPostsData() async {
     try {
       String token =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YTMzZDFhZGE2ZDMyNjM0MWE5YzEwZjQiLCJlbWFpbCI6InZhc2h2aS4wMjAyQGdtYWlsLmNvbSIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE3ODI3OTkyMTMsImV4cCI6MTc4Mjg4NTYxM30.rtBftE0mH3FljlNfdW75biIneBxgwCOKpeVwPGOFOxc";
 
       final response = await http.get(
-        Uri.parse(Api.homeUrl),
+        Uri.parse(Api.postsUrl),
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
@@ -24,7 +24,7 @@ class HomeService {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
-        return HomeModel.fromJson(jsonData);
+        return PostsModel.fromJson(jsonData);
       } else {
         throw Exception(
           "Failed to load data. Status Code: ${response.statusCode}",
@@ -35,3 +35,4 @@ class HomeService {
     }
   }
 }
+  

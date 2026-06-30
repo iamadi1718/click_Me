@@ -1,3 +1,4 @@
+import 'package:click_me/view/followRequests/FollowRequests.dart';
 import 'package:flutter/material.dart';
 import 'package:click_me/view/NotificationScreen/Notification_Detail_Screen.dart';
 
@@ -40,28 +41,33 @@ class NotificationScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                shape: BoxShape.circle,
+          InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowRequestsScreen()));
+            },
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.group, color: Colors.black),
               ),
-              child: const Icon(Icons.group, color: Colors.black),
-            ),
-            title: const Text(
-              "Follow Requests",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-            subtitle: const Text(
-              "219 users",
-              style: TextStyle(fontSize: 15, color: Colors.black),
-            ),
-            trailing: const Text(
-              "30m",
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              title: const Text(
+                "Follow Requests",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              subtitle: const Text(
+                "219 users",
+                style: TextStyle(fontSize: 15, color: Colors.black),
+              ),
+              trailing: const Text(
+                "30m",
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              ),
             ),
           ),
           const SizedBox(height: 10),

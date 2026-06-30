@@ -1,4 +1,8 @@
+import 'package:click_me/Models/ChatThreadModel/ChatThreadModel.dart';
+import 'package:click_me/services/Chatservices/Chatservices.dart';
 import 'package:click_me/view/Chat_QueueScreen/People_ChatScreen.dart';
+import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/Time.dart';
 import 'package:flutter/material.dart';
 
 class ChatItem {
@@ -19,160 +23,154 @@ class ChatItem {
   });
 }
 
-class ChatList extends StatelessWidget {
+class ChatList extends StatefulWidget {
   const ChatList({super.key});
 
-  static List<ChatItem> getDummyChats() {
-    return const [
-      ChatItem(
-        name: "Chat name 1",
-        message: "",
-        unreadText: "4+ new messages",
-        time: "3m",
-        isUnread: true,
-        avatarUrl:
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
-      ),
-      ChatItem(
-        name: "Chat name 2",
-        message: "",
-        unreadText: "2 new messages",
-        time: "10m",
-        isUnread: true,
-        avatarUrl:
-            "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80",
-      ),
-      ChatItem(
-        name: "Chat name 3",
-        message: "",
-        unreadText: "3 new messages",
-        time: "29m",
-        isUnread: true,
-        avatarUrl:
-            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
-      ),
-      ChatItem(
-        name: "Chat name 4",
-        message: "",
-        unreadText: "1 new message",
-        time: "37m",
-        isUnread: true,
-        avatarUrl:
-            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80",
-      ),
-      ChatItem(
-        name: "Chat name 5",
-        message: "for that matter I was just...",
-        unreadText: "",
-        time: "1h",
-        isUnread: false,
-        avatarUrl:
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
-      ),
-      ChatItem(
-        name: "Chat name 6",
-        message: "for example, it's just new...",
-        unreadText: "",
-        time: "1h",
-        isUnread: false,
-        avatarUrl:
-            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
-      ),
-    ];
+  @override
+  State<ChatList> createState() => _ChatListState();
+}
+
+class _ChatListState extends State<ChatList> {
+  Future<ChatThreadModel>? futureChat;
+
+  @override
+  void initState() {
+    super.initState();
+    futureChat = ChatService().getChatData();
   }
 
   @override
   Widget build(BuildContext context) {
-    final dummyChats = getDummyChats();
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-      itemCount: dummyChats.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 20),
-      itemBuilder: (context, index) {
-        final chat = dummyChats[index];
-        return InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PeopleChatScreen(chatName: chat.name),
+    return FutureBuilder<ChatThreadModel>(
+      future: futureChat,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error.toString()));
+        }
+
+        if (!snapshot.hasData ||
+            snapshot.data!.data == null ||
+            snapshot.data!.data!.threads == null) {
+          return const Center(child: Text("No Chats"));
+        }
+
+        final threads = snapshot.data!.data!.threads!;
+
+        return ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          itemCount: threads.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 20),
+          itemBuilder: (context, index) {
+            final thread = threads[index];
+
+            return InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                print("Thread ID: ${thread.id}");
+               Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => PeopleChatScreen(
+      chatName:
+          "${thread.participant?.firstName ?? ""} ${thread.participant?.lastName ?? ""}",
+      threadId: thread.id!,
+       receiverId: thread.participant!.id!,
+    ),
+  ),
+); },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: Colors.grey.shade200,
+                      backgroundImage:
+                          thread.participant?.profileImage != null
+                              ? NetworkImage(
+                                "${Api.baseUrl}${thread.participant!.profileImage}",
+                              )
+                              : null,
+                      child:
+                          thread.participant?.profileImage == null
+                              ? const Icon(Icons.person)
+                              : null,
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${thread.participant?.firstName ?? ""} ${thread.participant?.lastName ?? ""}",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          const SizedBox(height: 4),
+
+                          Text(
+                            thread.lastMessage?.text ?? "",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight:
+                                  thread.unreadCount! > 0
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                              color:
+                                  thread.unreadCount! > 0
+                                      ? Colors.black
+                                      : Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          getTimeAgo(thread.lastMessageAt ?? ""),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 13,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        if (thread.unreadCount! > 0)
+                          CircleAvatar(
+                            radius: 9,
+                            backgroundColor: const Color(0xff7372E2),
+                            child: Text(
+                              thread.unreadCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            child: Row(
-              children: [
-                // Circular Profile Picture
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.grey[200],
-                  backgroundImage: NetworkImage(chat.avatarUrl),
-                ),
-                const SizedBox(width: 16),
-                // Name and Message/Unread Subtitle
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        chat.name,
-                        style: const TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 18,
-                          fontWeight:
-                              FontWeight.w600, // Medium-bold font weight
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        chat.isUnread ? chat.unreadText : chat.message,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 15,
-                          fontWeight:
-                              chat.isUnread
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                          color:
-                              chat.isUnread ? Colors.black : Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Time and Purple Dot indicator
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      chat.time,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (chat.isUnread)
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF7372E2), // Matching purple dot color
-                          shape: BoxShape.circle,
-                        ),
-                      )
-                    else
-                      const SizedBox(height: 12, width: 12),
-                  ],
-                ),
-              ],
-            ),
-          ),
         );
       },
     );
