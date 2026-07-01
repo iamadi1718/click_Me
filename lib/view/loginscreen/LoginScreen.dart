@@ -1,32 +1,18 @@
 import 'package:click_me/view/custombackground/Custombackground.dart';
 import 'package:click_me/view/custombutton/Custombutton.dart';
 import 'package:click_me/view/customtextfield/CustomTextfield.dart';
-import 'package:click_me/view/dashboardpage/Dashboardpage.dart';
 import 'package:click_me/view/forgetpassword/Forgetpassword.dart';
 import 'package:click_me/view/signupscreen/Signupscreen.dart';
-import 'package:click_me/view/utils/Utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Loginscreen extends StatefulWidget {
-  const Loginscreen({super.key});
+import 'package:get/get.dart';
+import 'package:click_me/controller/likecontroller/login_controller.dart';
 
-  @override
-  State<Loginscreen> createState() => _LoginscreenState();
-}
+class Loginscreen extends StatelessWidget {
+  Loginscreen({super.key});
 
-class _LoginscreenState extends State<Loginscreen> {
-  final emailcontroller = TextEditingController();
-  final passwordcontroller = TextEditingController();
+  final controller = Get.put(LoginController());
   final _formkey = GlobalKey<FormState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool isPasswordHidden = true;
-  @override
-  void dispose() {
-    emailcontroller.dispose();
-    passwordcontroller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,58 +57,41 @@ class _LoginscreenState extends State<Loginscreen> {
                   },
                   first: 'Email address',
                   second: 'XXXXXX',
-
-                  controller: emailcontroller,
+                  controller: controller.email,
                 ),
-                Customtextfield(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
+                Obx(
+                  () => Customtextfield(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
 
-                    return null;
-                  },
-                  obscureText: isPasswordHidden,
-                  first: 'Password',
-                  second: 'XXXXXX',
-                  icon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isPasswordHidden = !isPasswordHidden;
-                      });
+                      return null;
                     },
-                    icon: Icon(
-                      isPasswordHidden
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                    obscureText: controller.isPasswordHidden.value,
+                    first: 'Password',
+                    second: 'XXXXXX',
+                    icon: IconButton(
+                      onPressed: () {
+                        controller.isPasswordHidden.toggle();
+                      },
+                      icon: Icon(
+                        controller.isPasswordHidden.value
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
                     ),
+                    controller: controller.password,
                   ),
-                  controller: passwordcontroller,
                 ),
                 Custombutton(
                   text: 'Log In',
                   onTap: () {
                     if (_formkey.currentState!.validate()) {
-                      _auth
-                          .signInWithEmailAndPassword(
-                            email: emailcontroller.text.toString(),
-                            password: passwordcontroller.text.toString(),
-                          )
-                          .then((value) {
-                            Utils().toastmessage(value.user!.email.toString());
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Dashboardpage(),
-                              ),
-                            );
-                          })
-                          .onError((error, stackTrace) {
-                            Utils().toastmessage(error.toString());
-                          });
+                      controller.login();
                     }
                   },
                   buttoncolor: Color.fromRGBO(85, 13, 155, 1),
@@ -131,10 +100,7 @@ class _LoginscreenState extends State<Loginscreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ForgotPassword()),
-                    );
+                    Get.to(() => ForgotPassword());
                   },
                   child: Text(
                     'Forgotten Password?',
@@ -145,10 +111,7 @@ class _LoginscreenState extends State<Loginscreen> {
                 Custombutton(
                   text: 'Create New Account',
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Signupscreen()),
-                    );
+                    Get.to(() => Signupscreen());
                   },
                   buttoncolor: Colors.white,
                   bordercolor: Color.fromRGBO(114, 111, 220, 1),

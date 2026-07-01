@@ -127,6 +127,7 @@ class Story {
   String? createdAt;
   String? updatedAt;
   int? v;
+  String? caption;
 
   Story({
     this.id,
@@ -144,6 +145,7 @@ class Story {
     this.createdAt,
     this.updatedAt,
     this.v,
+    this.caption,
   });
 
   Story.fromJson(Map<String, dynamic> json) {
@@ -164,6 +166,7 @@ class Story {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     v = json['__v'];
+    caption = json['caption'];
   }
 
   Map<String, dynamic> toJson() {
@@ -183,6 +186,7 @@ class Story {
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       '__v': v,
+      'caption': caption,
     };
   }
 }

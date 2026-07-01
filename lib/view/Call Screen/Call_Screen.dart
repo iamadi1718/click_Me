@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CallScreen extends StatefulWidget {
   final String chatName;
@@ -24,62 +25,33 @@ class _CallScreenState extends State<CallScreen> {
           children: [
             // Top Navigation Bar
             Container(
-  height: 70,
-  color: Colors.white,
-  padding: const EdgeInsets.symmetric(horizontal: 8),
-  child: Row(
-    children: [
-      IconButton(
-        icon: const Icon(
-          Icons.arrow_back,
-          color: Colors.black,
-          size: 28,
-        ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-
-      const SizedBox(width: 8),
-
-      Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.chatName,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
+              height: 56,
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.chatName,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                  Text("Call Type: ${widget.callType}"),
+    Text("Call ID: ${widget.callId}"),
+                ],
               ),
             ),
 
-            const SizedBox(height: 2),
-
-            Text(
-              "${widget.callType.toUpperCase()} ",
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-              ),
-            ),
-
-            Text(
-              "Call ID: ${widget.callId}",
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 11,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    ],
-  ),
-),
             // Video Split View
             Expanded(
               child: ClipRRect(
@@ -198,7 +170,7 @@ class _CallScreenState extends State<CallScreen> {
                                 // End Call Button
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Get.back();
                                   },
                                   child: Container(
                                     width: 64,

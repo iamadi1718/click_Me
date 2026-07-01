@@ -2,6 +2,7 @@ import 'package:click_me/Models/ChatMessagesModel/ChatMessageModel.dart';
 import 'package:click_me/services/CallServices/CallServices.dart';
 import 'package:click_me/services/ChatDetailsServices/ChatDetailsServices.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:click_me/view/custom/Message_Bubble.dart';
 import 'package:click_me/view/Call%20Screen/Call_Screen.dart';
 import 'package:click_me/view/custom/Chat_message.dart';
@@ -47,7 +48,7 @@ void initState() {
               children: [
                 IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   icon: const Icon(Icons.arrow_back, size: 32),
                 ),
@@ -117,16 +118,11 @@ void initState() {
     );
 
     if (response.success == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CallScreen(
-            chatName: widget.chatName,
-            callId: response.data!.callId!,
-  callType: response.data!.callType!,
-          ),
-        ),
-      );
+      Get.to(() => CallScreen(
+        chatName: widget.chatName,
+        callId: response.data!.callId!,
+        callType: response.data!.callType!,
+      ));
     }
   } catch (e) {
     print(e);
@@ -144,16 +140,11 @@ void initState() {
     );
 
     if (response.success == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CallScreen(
-            chatName: widget.chatName,
-            callId: response.data!.callId!,
-  callType: response.data!.callType!,
-          ),
-        ),
-      );
+      Get.to(() => CallScreen(
+        chatName: widget.chatName,
+        callId: response.data!.callId!,
+        callType: response.data!.callType!,
+      ));
     }
   } catch (e) {
     print(e);

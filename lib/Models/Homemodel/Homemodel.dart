@@ -4,12 +4,7 @@ class HomeModel {
   String? message;
   bool? success;
 
-  HomeModel({
-    this.statusCode,
-    this.data,
-    this.message,
-    this.success,
-  });
+  HomeModel({this.statusCode, this.data, this.message, this.success});
 
   HomeModel.fromJson(Map<String, dynamic> json) {
     statusCode = json['statusCode'];
@@ -35,16 +30,12 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     if (json['posts'] != null) {
-      posts = (json['posts'] as List)
-          .map((e) => Posts.fromJson(e))
-          .toList();
+      posts = (json['posts'] as List).map((e) => Posts.fromJson(e)).toList();
     }
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'posts': posts?.map((e) => e.toJson()).toList(),
-    };
+    return {'posts': posts?.map((e) => e.toJson()).toList()};
   }
 }
 
@@ -86,15 +77,12 @@ class Posts {
   Posts.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
 
-    userId =
-        json['user_id'] != null ? UserId.fromJson(json['user_id']) : null;
+    userId = json['user_id'] != null ? UserId.fromJson(json['user_id']) : null;
 
     caption = json['caption'];
 
     if (json['media'] != null) {
-      media = (json['media'] as List)
-          .map((e) => Media.fromJson(e))
-          .toList();
+      media = (json['media'] as List).map((e) => Media.fromJson(e)).toList();
     }
 
     if (json['tags'] != null) {

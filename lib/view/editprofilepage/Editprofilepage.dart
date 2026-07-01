@@ -1,27 +1,20 @@
+import 'package:click_me/controller/likecontroller/edit_profile_controller.dart';
 import 'package:click_me/view/custombutton/Custombutton.dart';
 import 'package:click_me/view/customtextfield/CustomTextfield.dart';
 import 'package:click_me/view/settingspage/Settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class Editprofilepages extends StatefulWidget {
-  const Editprofilepages({super.key});
+class Editprofilepages extends StatelessWidget {
+  Editprofilepages({super.key});
 
-  @override
-  State<Editprofilepages> createState() => _EditprofilepagesState();
-}
+  final controller = Get.put(EditProfileController());
 
-class _EditprofilepagesState extends State<Editprofilepages> {
-  String? selectedGender;
-  final namecontroller = TextEditingController();
-  final usernamecontroller = TextEditingController();
-  final birthcontroller = TextEditingController();
-  final biocontroller = TextEditingController();
-  final linkcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(title: Text('Edit Profile')),
+      appBar: AppBar(title: const Text('Edit Profile')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -31,7 +24,7 @@ class _EditprofilepagesState extends State<Editprofilepages> {
 
               CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/images/img1.png'),
+                backgroundImage: const AssetImage('assets/images/img1.png'),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -41,7 +34,7 @@ class _EditprofilepagesState extends State<Editprofilepages> {
                       child: CircleAvatar(
                         radius: 12,
                         backgroundColor: Colors.grey[800],
-                        child: Icon(Icons.edit, size: 18, color: Colors.white),
+                        child: const Icon(Icons.edit, size: 18, color: Colors.white),
                       ),
                     ),
                   ],
@@ -51,27 +44,27 @@ class _EditprofilepagesState extends State<Editprofilepages> {
               Customtextfield(
                 first: 'Name',
                 second: 'xxxxx',
-                controller: namecontroller,
+                controller: controller.name,
               ),
               Customtextfield(
                 first: 'Username',
                 second: 'xxxxx',
-                controller: usernamecontroller,
-                icon: Icon(Icons.edit),
+                controller: controller.username,
+                icon: const Icon(Icons.edit),
               ),
               Customtextfield(
                 first: 'Bio',
                 second: 'xxxxx',
-                controller: biocontroller,
-                icon: Icon(Icons.edit),
+                controller: controller.bio,
+                icon: const Icon(Icons.edit),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: Row(
                   children: [
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: selectedGender,
+                      child: Obx(() => DropdownButtonFormField<String>(
+                        value: controller.selectedGender.value,
 
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -93,18 +86,16 @@ class _EditprofilepagesState extends State<Editprofilepages> {
                           ),
                         ],
                         onChanged: (value) {
-                          setState(() {
-                            selectedGender = value;
-                          });
+                          controller.selectGender(value);
                         },
-                      ),
+                      )),
                     ),
 
                     Expanded(
                       child: Customtextfield(
                         first: 'Date of birth',
                         second: 'xx/xx/xxxx',
-                        controller: birthcontroller,
+                        controller: controller.dob,
                       ),
                     ),
                   ],
@@ -113,27 +104,24 @@ class _EditprofilepagesState extends State<Editprofilepages> {
               Customtextfield(
                 first: 'Add a link',
                 second: 'xxxxx',
-                controller: linkcontroller,
-                icon: Icon(Icons.edit),
+                controller: controller.link,
+                icon: const Icon(Icons.edit),
               ),
 
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
+                  Get.to(() => SettingsPage());
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       width: 1,
-                      color: Color.fromRGBO(114, 111, 220, 1),
+                      color: const Color.fromRGBO(114, 111, 220, 1),
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'More Settings',
                       style: TextStyle(
@@ -152,7 +140,9 @@ class _EditprofilepagesState extends State<Editprofilepages> {
                   width: 120,
                   child: Custombutton(
                     text: 'Done',
-                    onTap: () {},
+                    onTap: () {
+                      controller.saveProfile();
+                    },
                     buttoncolor: const Color.fromRGBO(85, 13, 155, 1),
                     bordercolor: const Color.fromRGBO(85, 13, 155, 1),
                     textcolor: Colors.white,

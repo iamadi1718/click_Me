@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:click_me/Models/Storymodel/Storymodel.dart';
+import 'package:click_me/data/services/local/storage_services.dart';
 import 'package:click_me/view/utils/Api.dart';
 import 'package:http/http.dart' as http;
 class StoryService {
   Future<StoryModel> getStoryData() async {
     try {
-      String token =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YTMzZDFhZGE2ZDMyNjM0MWE5YzEwZjQiLCJlbWFpbCI6InZhc2h2aS4wMjAyQGdtYWlsLmNvbSIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE3ODI3OTkyMTMsImV4cCI6MTc4Mjg4NTYxM30.rtBftE0mH3FljlNfdW75biIneBxgwCOKpeVwPGOFOxc";
+      String token = StorageService.getAccessToken();
 
       final response = await http.get(
         Uri.parse(Api.storyUrl),
@@ -26,11 +26,36 @@ class StoryService {
         return StoryModel.fromJson(jsonData);
       } else {
         throw Exception(
-          "Failed to load data. Status Code: ${response.statusCode}",
+          "Story Feed API failed. Status Code: ${response.statusCode}, Body: ${response.body}",
         );
       }
     } catch (e) {
       throw Exception("Something went wrong: $e");
+    }
+  }
+
+  Future<bool> deleteStory(String storyId) async {
+    try {
+      String token = StorageService.getAccessToken();
+
+      final response = await http.delete(
+        Uri.parse("${Api.deleteStoryBaseUrl}/$storyId"),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return true;
+      } else {
+        throw Exception(
+          "Failed to delete story. Status Code: ${response.statusCode}",
+        );
+      }
+    } catch (e) {
+      throw Exception("Failed to delete story: $e");
     }
   }
 }

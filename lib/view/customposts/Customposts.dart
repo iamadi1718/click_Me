@@ -13,16 +13,18 @@ class Customposts extends StatefulWidget {
     required this.iconno,
     required this.comment,
     required this.send,
-    required this.index,
+    required this.index, required this.onComment, required this.postId,
   });
   final String title;
   final String time;
+  final VoidCallback onComment;
 
   final ImageProvider image;
   final String iconno;
   final String comment;
   final String send;
   final int index;
+  final String postId;
 
   @override
   State<Customposts> createState() => _CustompostsState();
@@ -113,7 +115,8 @@ Obx(
   ),
 ),
             SizedBox(width: width * 0.01),
-            IconButton(onPressed: () {}, icon: Icon(Icons.comment)),
+            IconButton(onPressed: widget.onComment,
+icon: Icon(Icons.comment)),
             Text(
               widget.comment,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),

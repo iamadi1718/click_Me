@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:click_me/view/custombackground/Custombackground.dart';
 import 'package:click_me/view/loginscreen/LoginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -17,10 +18,7 @@ class _SplashscreenState extends State<Splashscreen> {
     super.initState();
     Timer(
       Duration(seconds: 3),
-      () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Loginscreen()),
-      ),
+      () => Get.off(() => Loginscreen()),
     );
   }
 

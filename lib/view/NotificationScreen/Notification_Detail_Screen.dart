@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NotificationDetailsScreen extends StatelessWidget {
   const NotificationDetailsScreen({super.key});
@@ -14,7 +15,7 @@ class NotificationDetailsScreen extends StatelessWidget {
 
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
           icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),

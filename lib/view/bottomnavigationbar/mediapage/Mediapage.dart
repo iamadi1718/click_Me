@@ -1,3 +1,4 @@
+import 'package:click_me/view/Create Story/create_story.dart';
 import 'package:flutter/material.dart';
 
 class Mediapage extends StatelessWidget {
@@ -5,6 +6,6 @@ class Mediapage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const CreateStoryScreen();
   }
 }

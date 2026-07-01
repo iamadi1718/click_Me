@@ -3,13 +3,7 @@ import 'package:click_me/services/ReelsServices/ReelsServices.dart';
 import 'package:click_me/view/utils/Api.dart';
 import 'package:flutter/material.dart';
 
-class ReelsScreen extends StatefulWidget {
-  const ReelsScreen({super.key});
-
-  @override
-  State<ReelsScreen> createState() => _ReelsScreenState();
-}
-
+class ReelsScreen extends StatefulWidget { const ReelsScreen({super.key}); @override State<ReelsScreen> createState() => _ReelsScreenState(); }
 class _ReelsScreenState extends State<ReelsScreen> {
   late Future<ReelsModel> futureReels;
 
@@ -21,55 +15,49 @@ class _ReelsScreenState extends State<ReelsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: FutureBuilder<ReelsModel>(
-        future: futureReels,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-
-          if (!snapshot.hasData ||
-              snapshot.data!.data == null ||
-              snapshot.data!.data!.reels == null ||
-              snapshot.data!.data!.reels!.isEmpty) {
-            return const Center(
-              child: Text("No Reels Found"),
-            );
-          }
-
-          final reels = snapshot.data!.data!.reels!;
-
-          return GridView.builder(
-            padding: const EdgeInsets.all(6),
-            itemCount: reels.length,
-            gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 3,
-              mainAxisSpacing: 3,
-              childAspectRatio: 0.68,
-            ),
-            itemBuilder: (context, index) {
-              return ReelTile(reel: reels[index]);
-            },
+    return FutureBuilder<ReelsModel>(
+      future: futureReels,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        },
-      ),
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        }
+
+        if (!snapshot.hasData ||
+            snapshot.data!.data == null ||
+            snapshot.data!.data!.reels == null ||
+            snapshot.data!.data!.reels!.isEmpty) {
+          return const Center(
+            child: Text("No Reels Found"),
+          );
+        }
+
+        final reels = snapshot.data!.data!.reels!;
+
+        return GridView.builder(
+          
+          itemCount: reels.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 3,
+            mainAxisSpacing: 3,
+            childAspectRatio: 0.68,
+          ),
+          itemBuilder: (context, index) {
+            return ReelTile(reel: reels[index]);
+          },
+        );
+      },
     );
   }
 }
-
-
 class ReelTile extends StatelessWidget {
   final Reel reel;
 

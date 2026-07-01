@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class StartLiveScreen extends StatelessWidget {
   const StartLiveScreen({super.key});
@@ -49,7 +50,7 @@ class StartLiveScreen extends StatelessWidget {
                         children: [
                           IconButton(
                             onPressed: () {
-                              Navigator.pop(context);
+                              Get.back();
                             },
                             icon: const Icon(
                               Icons.arrow_back_rounded,
