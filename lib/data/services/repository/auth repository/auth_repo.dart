@@ -32,3 +32,4 @@ class AuthRepository {
     return AuthResponseModel.fromJson(response);
   }
 }
+

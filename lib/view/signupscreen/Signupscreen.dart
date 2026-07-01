@@ -1,7 +1,6 @@
 import 'package:click_me/view/custombackground/Custombackground.dart';
 import 'package:click_me/view/custombutton/Custombutton.dart';
 import 'package:click_me/view/customtextfield/CustomTextfield.dart';
-import 'package:click_me/view/loginscreen/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:click_me/controller/likecontroller/register_controller.dart';
@@ -237,7 +236,7 @@ class Signupscreen extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        Get.off(() => Loginscreen());
+                        Get.back();
                       },
                       child: const Text(
                         'Login',

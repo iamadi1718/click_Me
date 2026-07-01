@@ -17,3 +17,4 @@ class LoginRepository {
     return AuthResponseModel.fromJson(response);
   }
 }
+

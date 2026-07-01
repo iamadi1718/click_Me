@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:click_me/Models/ProfileModel/ProfileModel.dart';
 import 'package:click_me/data/services/local/storage_services.dart';
-import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:http/http.dart' as http;
 class ProfileService {
   Future<ProfileModel> getProfileData() async {

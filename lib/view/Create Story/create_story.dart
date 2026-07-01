@@ -1,8 +1,10 @@
 import 'dart:math' as math;
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:click_me/view/CreateLive_Screen/Start_Live.dart';
 import '../../controller/likecontroller/Create_Story_controller.dart';
+import 'package:click_me/controller/likecontroller/dashboard_controller.dart';
 
 
 class CreateStoryScreen extends StatefulWidget {
@@ -14,6 +16,18 @@ class CreateStoryScreen extends StatefulWidget {
 
 class _CreateStoryScreenState extends State<CreateStoryScreen> {
   final controller = Get.put(CreateStoryController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.initCamera();
+  }
+
+  @override
+  void dispose() {
+    controller.disposeCamera();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,37 +55,23 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                           fit: BoxFit.cover,
                         );
                       }
-                      return Image.asset(
-                        'assets/images/flowers_story.png',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Fallback in case the image fails to load
-                          return Container(
-                            color: Colors.grey[900],
-                            child: const Center(
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.white24,
-                                size: 64,
-                              ),
-                            ),
-                          );
-                        },
+                      if (controller.isCameraInitialized.value &&
+                          controller.cameraController != null) {
+                        return SizedBox.expand(
+                          child: CameraPreview(controller.cameraController!),
+                        );
+                      }
+                      return Container(
+                        color: Colors.black,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF6B4EFF),
+                          ),
+                        ),
                       );
                     }),
                   ),
 
-                  // Doodles Painter
-                  Obx(() {
-                    if (controller.pickedFile.value != null) {
-                      return const SizedBox.shrink();
-                    }
-                    return Positioned.fill(
-                      child: CustomPaint(
-                        painter: DoodlesPainter(),
-                      ),
-                    );
-                  }),
 
                   // Top Header Overlay (Back Button + Title)
                   Positioned(
@@ -79,103 +79,78 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                     left: 8,
                     right: 16,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Obx(() => IconButton(
-                          icon: Icon(
-                            controller.pickedFile.value != null
-                                ? Icons.close
-                                : Icons.arrow_back,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                          onPressed: () {
-                            if (controller.pickedFile.value != null) {
-                              controller.clearPickedFile();
-                            } else {
-                              Get.back();
-                            }
-                          },
-                        )),
-                        const SizedBox(width: 8),
-                        Obx(() {
-                          if (controller.pickedFile.value != null) {
-                            return const SizedBox.shrink();
-                          }
-                          return const Text(
-                            'Create with clickME',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.5,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black45,
-                                  offset: Offset(1, 1),
-                                  blurRadius: 4,
+                        Row(
+                          children: [
+                            Obx(() => IconButton(
+                              icon: Icon(
+                                controller.pickedFile.value != null
+                                    ? Icons.close
+                                    : Icons.arrow_back,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                              onPressed: () {
+                                if (controller.pickedFile.value != null) {
+                                  controller.clearPickedFile();
+                                } else {
+                                  if (Navigator.canPop(context)) {
+                                    Get.back();
+                                  } else {
+                                    // If we cannot pop, switch back to the Home tab (index 0)
+                                    if (Get.isRegistered<DashboardController>()) {
+                                      Get.find<DashboardController>().changeIndex(0);
+                                    }
+                                  }
+                                }
+                              },
+                            )),
+                            const SizedBox(width: 8),
+                            Obx(() {
+                              if (controller.pickedFile.value != null) {
+                                return const SizedBox.shrink();
+                              }
+                              return const Text(
+                                'Create with clickME',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: -0.5,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black45,
+                                      offset: Offset(1, 1),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
+                              );
+                            }),
+                          ],
+                        ),
+                        Obx(() {
+                          if (controller.pickedFile.value == null &&
+                              controller.isCameraInitialized.value) {
+                            return IconButton(
+                              onPressed: () {
+                                controller.switchCamera();
+                              },
+                              icon: const Icon(
+                                Icons.flip_camera_ios_rounded,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
                         }),
                       ],
                     ),
                   ),
 
-                  // "Golden Hour" slanted text doodle
-                  Obx(() {
-                    if (controller.pickedFile.value != null) {
-                      return const SizedBox.shrink();
-                    }
-                    return Positioned(
-                      top: statusBarHeight + 90,
-                      right: 40,
-                      child: Transform.rotate(
-                        angle: -0.15,
-                        child: const Text(
-                          '<<< golden hour',
-                          style: TextStyle(
-                            color: Color(0xFFD5A9A0),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FontStyle.italic,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black26,
-                                offset: Offset(0.5, 0.5),
-                                blurRadius: 2,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
 
-                  // Center Hashtag Text
-                  Obx(() {
-                    if (controller.pickedFile.value != null) {
-                      return const SizedBox.shrink();
-                    }
-                    return Center(
-                      child: const Text(
-                        '#camera',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.5,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black45,
-                              offset: Offset(1.5, 1.5),
-                              blurRadius: 8,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
                 ],
               ),
             ),

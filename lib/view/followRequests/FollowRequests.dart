@@ -1,7 +1,7 @@
 import 'package:click_me/Models/followRequestsModel/FollowRequestsModel.dart';
 import 'package:click_me/services/FollowRequestsServices/FollowRequestsServices.dart';
 
-import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:flutter/material.dart';
 
 class FollowRequestsScreen extends StatefulWidget {

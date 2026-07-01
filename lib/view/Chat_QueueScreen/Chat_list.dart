@@ -1,7 +1,7 @@
 import 'package:click_me/Models/ChatThreadModel/ChatThreadModel.dart';
 import 'package:click_me/services/Chatservices/Chatservices.dart';
 import 'package:click_me/view/Chat_QueueScreen/People_ChatScreen.dart';
-import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:click_me/view/utils/Time.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -172,3 +172,4 @@ class _ChatListState extends State<ChatList> {
     );
   }
 }
+

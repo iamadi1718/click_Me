@@ -2,7 +2,6 @@ import 'package:click_me/controller/likecontroller/otp_verify_controller.dart';
 import 'package:click_me/view/custombackground/Custombackground.dart';
 import 'package:click_me/view/custombutton/Custombutton.dart';
 import 'package:click_me/view/customtextfield/CustomTextfield.dart';
-import 'package:click_me/view/signupscreen/Signupscreen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -160,7 +159,7 @@ class OtpVerifyScreen extends StatelessWidget {
                   Custombutton(
                     text: 'Create new Account',
                     onTap: () {
-                      Get.to(() => Signupscreen());
+                      Get.back();
                     },
                     buttoncolor: Colors.transparent,
                     bordercolor: Colors.white,

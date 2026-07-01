@@ -29,8 +29,16 @@ class Customposts extends StatefulWidget {
 }
 
 class _CustompostsState extends State<Customposts> {
-  final LikeController controller = Get.find();
+  late final LikeController controller;
   bool favourite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.isRegistered<LikeController>()
+        ? Get.find<LikeController>()
+        : Get.put(LikeController());
+  }
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;

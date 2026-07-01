@@ -42,7 +42,7 @@ class LoginController extends GetxController {
       await StorageService.saveUserId(response.data.user.id);
 
       // 4. Navigate to Dashboard
-      Get.to(() => Dashboardpage());
+      Get.offAll(() => Dashboardpage());
     } catch (error) {
       Utils().toastmessage(error.toString());
     } finally {

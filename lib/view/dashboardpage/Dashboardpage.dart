@@ -13,11 +13,11 @@ class Dashboardpage extends StatelessWidget {
   final controller = Get.put(DashboardController());
 
   final List<Widget> pages = [
-    Homepage(),
+    const Homepage(),
     FriendsScreen(),
     Mediapage(),
     ReelsScreen(),
-    Profilepage(),
+    const Profilepage(),
   ];
 
   @override
