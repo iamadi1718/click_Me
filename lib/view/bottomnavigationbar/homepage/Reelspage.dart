@@ -1,6 +1,6 @@
 import 'package:click_me/Models/reel_model/ReelModel.dart';
 import 'package:click_me/services/ReelsServices/ReelsServices.dart';
-import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:flutter/material.dart';
 
 class ReelsScreen extends StatefulWidget { const ReelsScreen({super.key}); @override State<ReelsScreen> createState() => _ReelsScreenState(); }

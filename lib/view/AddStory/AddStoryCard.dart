@@ -1,6 +1,6 @@
 import 'package:click_me/Models/Storymodel/Storymodel.dart';
 import 'package:click_me/view/storyview/story_view_screen.dart';
-import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Create Story/create_story.dart';
@@ -19,12 +19,17 @@ class Addstorycard extends StatelessWidget {
       onTap: () {
         if (storyPosted) {
           final lastStory = currentUserStory!.stories!.last;
+          final mediaUrl = (lastStory.media?.url != null && lastStory.media!.url!.isNotEmpty)
+              ? "${Api.baseUrl}${lastStory.media!.url}"
+              : "";
+          final profileUrl = (currentUserStory!.user?.profilePicture != null &&
+                  currentUserStory!.user!.profilePicture!.isNotEmpty)
+              ? "${Api.baseUrl}${currentUserStory!.user!.profilePicture}"
+              : "";
           Get.to(() => StoryViewScreen(
-                mediaUrl: "${Api.baseUrl}${lastStory.media?.url}",
+                mediaUrl: mediaUrl,
                 username: "My Story",
-                profileImage: currentUserStory!.user?.profilePicture != null
-                    ? "${Api.baseUrl}${currentUserStory!.user!.profilePicture}"
-                    : "https://via.placeholder.com/150",
+                profileImage: profileUrl,
                 caption: lastStory.caption,
                 timeAgo: "Just now",
                 storyId: lastStory.id,
@@ -158,3 +163,4 @@ class Addstorycard extends StatelessWidget {
     );
   }
 }
+

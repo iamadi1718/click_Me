@@ -7,7 +7,8 @@ class Api {
   static const String AddprofileUrl = "$baseUrl/api/v1/users/complete-profile";
   static const String storyUploadUrl = "$baseUrl/api/v1/story/upload";
   static const String postUrl = "$baseUrl/api/v1/story/feed";
-  static const String deleteStoryBaseUrl = "$baseUrl/api/v1/story";
+  static const String deleteStoryBaseUrl = "$baseUrl/api/v1/story/delete";
+  static const String viewStoryBaseUrl = "$baseUrl/api/v1/story/view";
 
   static const String homeUrl = "$baseUrl/api/v1/feed/home";
   static const String storyUrl = "$baseUrl/api/v1/story/feed";
@@ -21,8 +22,20 @@ class Api {
   static const String reelsUrl = "$baseUrl/api/v1/feed/reels";
   static const String postsUrl = "$baseUrl/api/v1/post/explore";
   static const String chatMessagesUrl = "$baseUrl/api/v1/chat/messages";
+<<<<<<< HEAD:lib/view/utils/Api.dart
     static const String explorePostsUrl = "$baseUrl/api/v1/post/explore";
     static const String getCommentsUrl = "$baseUrl/api/v1/post/comments";
        static const String commentLikeUrl = "$baseUrl/api/v1/comment/like";
 
+=======
+  static const String createliveUrl = "$baseUrl/api/v1/live/create";
+  static const String startliveUrl = "$baseUrl/api/v1/live/start";
+  static const String endliveUrl = "$baseUrl/api/v1/live/end";
+  static const String detailliveUrl = "$baseUrl/api/v1/live/details";
+  static const String livecommentsUrl = "$baseUrl/api/v1/live/comments";
+  static const String userActiveLiveUrl = "$baseUrl/api/v1/live/user";
+  static const String updateprofileUrl = "$baseUrl/api/v1/users/update-profile";
+  static const String changepasswordUrl =
+      "$baseUrl/api/v1/sers/change-password";
+>>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e:lib/view/utils/api.dart
 }

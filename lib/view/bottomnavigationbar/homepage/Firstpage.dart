@@ -1,13 +1,13 @@
 import 'package:click_me/Models/Homemodel/Homemodel.dart';
 import 'package:click_me/Models/Storymodel/Storymodel.dart';
 import 'package:click_me/controller/likecontroller/Likecontroller.dart';
+import 'package:click_me/controller/likecontroller/story_feed_controller.dart';
 import 'package:click_me/services/Homeservices/Homeservices.dart';
-import 'package:click_me/services/Storyservices/Storyservices.dart';
 import 'package:click_me/view/AddStory/AddStoryCard.dart';
 import 'package:click_me/view/bottomnavigationbar/homepage/CommentsBottomSheet.dart';
 import 'package:click_me/view/customposts/Customposts.dart';
 import 'package:click_me/view/customstory/Customstory.dart';
-import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:click_me/data/services/local/storage_services.dart';
@@ -23,15 +23,21 @@ class Firstpage extends StatefulWidget {
 }
 
 class _FirstpageState extends State<Firstpage> {
-  final LikeController likeController = Get.put(LikeController());
+  late final LikeController likeController;
+  late final StoryFeedController storyFeedController;
   Future<HomeModel>? futureHome;
-  Future<StoryModel>? futureStory;
   Future<ProfileModel>? futureProfile;
+
   @override
   void initState() {
     super.initState();
+    likeController = Get.isRegistered<LikeController>()
+        ? Get.find<LikeController>()
+        : Get.put(LikeController());
+    storyFeedController = Get.isRegistered<StoryFeedController>()
+        ? Get.find<StoryFeedController>()
+        : Get.put(StoryFeedController());
     futureHome = HomeService().getHomeData();
-    futureStory = StoryService().getStoryData();
     futureProfile = ProfileService().getProfileData();
   }
 
@@ -46,23 +52,23 @@ class _FirstpageState extends State<Firstpage> {
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0),
           child: Divider(thickness: 2),
         ),
-        FutureBuilder<List<dynamic>>(
-          future: Future.wait([futureStory!, futureProfile!]),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+        FutureBuilder<ProfileModel>(
+          future: futureProfile,
+          builder: (context, profileSnapshot) {
+            if (profileSnapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox(
                 height: 196,
                 child: Center(child: CircularProgressIndicator()),
               );
             }
 
-            if (snapshot.hasError) {
-              return SizedBox(
-                height: 196,
-                child: Center(child: Text(snapshot.error.toString())),
-              );
+            if (profileSnapshot.hasError) {
+              // Profile API failed (e.g. server 500 error) — fall back gracefully using local user id
+              final fallbackId = StorageService.getUserId();
+              return _buildStorySection(width, null, fallbackId);
             }
 
+<<<<<<< HEAD
             if (!snapshot.hasData || snapshot.data![0] == null) {
               return const SizedBox(
                 height: 196,
@@ -157,6 +163,17 @@ class _FirstpageState extends State<Firstpage> {
                 ],
               ),
             );
+=======
+            if (!profileSnapshot.hasData || profileSnapshot.data == null) {
+              final fallbackId = StorageService.getUserId();
+              return _buildStorySection(width, null, fallbackId);
+            }
+
+            final profileData = profileSnapshot.data!;
+            final currentUserId = profileData.data?.id ?? StorageService.getUserId();
+
+            return _buildStorySection(width, profileData, currentUserId);
+>>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
           },
         ),
         SizedBox(height: height * 0.03),
@@ -193,7 +210,12 @@ class _FirstpageState extends State<Firstpage> {
 
                   time: post.createdAt ?? "",
 
-                  image: NetworkImage("${Api.baseUrl}${post.media![0].url}"),
+                  image: post.media != null &&
+                          post.media!.isNotEmpty &&
+                          post.media![0].url != null &&
+                          post.media![0].url!.isNotEmpty
+                      ? NetworkImage("${Api.baseUrl}${post.media![0].url}")
+                      : const AssetImage("assets/images/chill.jpg") as ImageProvider,
 
                   iconno: post.likesCount.toString(),
 
@@ -223,4 +245,96 @@ class _FirstpageState extends State<Firstpage> {
       ],
     );
   }
+<<<<<<< HEAD
 }
+=======
+
+  Widget _buildStorySection(double width, dynamic profileData, String? currentUserId) {
+    return Obx(() {
+      if (storyFeedController.isLoading.value && storyFeedController.rxStory.value == null) {
+        return const SizedBox(
+          height: 196,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (storyFeedController.error.value.isNotEmpty && storyFeedController.rxStory.value == null) {
+        return const SizedBox(
+          height: 196,
+          child: Center(child: Text("Could not load stories")),
+        );
+      }
+
+      final storyData = storyFeedController.rxStory.value;
+      if (storyData == null || storyData.data == null || storyData.data!.stories == null) {
+        return const SizedBox(
+          height: 196,
+          child: Center(child: Text("No Stories")),
+        );
+      }
+
+      final users = storyData.data!.stories!;
+      final effectiveUserId = currentUserId ?? StorageService.getUserId();
+
+      StoryUser? currentUserStory;
+      final otherUsers = <StoryUser>[];
+      for (var u in users) {
+        if (u.user?.id == effectiveUserId) {
+          currentUserStory = u;
+        } else {
+          otherUsers.add(u);
+        }
+      }
+
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            const SizedBox(width: 10),
+            Addstorycard(currentUserStory: currentUserStory),
+            SizedBox(width: width * 0.05),
+            ...otherUsers.expand((user) {
+              return user.stories!.map((story) {
+                return Padding(
+                  padding: EdgeInsets.only(right: width * 0.05),
+                  child: Customstory(
+                    bgimage:
+                        story.media?.url != null && story.media!.url!.isNotEmpty
+                            ? NetworkImage("${Api.baseUrl}${story.media!.url}")
+                            : const AssetImage("assets/images/chill.jpg") as ImageProvider,
+                    profileImage:
+                        user.user?.profilePicture != null && user.user!.profilePicture!.isNotEmpty
+                            ? NetworkImage("${Api.baseUrl}${user.user!.profilePicture}")
+                            : const AssetImage("assets/images/profile.jpg") as ImageProvider,
+                    text: "${user.user?.firstName ?? ""} ${user.user?.lastName ?? ""}",
+                    onTap: () {
+                      final mediaUrl = story.media?.url != null && story.media!.url!.isNotEmpty
+                          ? "${Api.baseUrl}${story.media!.url}"
+                          : "";
+                      final profileUrl = user.user?.profilePicture != null && user.user!.profilePicture!.isNotEmpty
+                          ? "${Api.baseUrl}${user.user!.profilePicture}"
+                          : "";
+                      Get.to(
+                        () => StoryViewScreen(
+                          mediaUrl: mediaUrl,
+                          username: "${user.user?.firstName ?? ""} ${user.user?.lastName ?? ""}",
+                          profileImage: profileUrl,
+                          caption: story.caption,
+                          timeAgo: "Just now",
+                          storyId: story.id,             // ← pass storyId
+                          isMyStory: false,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              });
+            }),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+>>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e

@@ -2,7 +2,6 @@ import 'package:click_me/controller/likecontroller/forgot_controller.dart';
 import 'package:click_me/view/custombackground/Custombackground.dart';
 import 'package:click_me/view/custombutton/Custombutton.dart';
 import 'package:click_me/view/customtextfield/CustomTextfield.dart';
-import 'package:click_me/view/loginscreen/LoginScreen.dart';
 import 'package:click_me/view/signupscreen/Signupscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,7 +61,7 @@ class ForgotPassword extends StatelessWidget {
                   controller: controller.email,
                 ),
                 Customtextfield(
-                  first: 'Email phone',
+                  first: 'Enter phone',
                   second: 'XXXXXX',
                   controller: controller.phone,
                   keyboardType: const TextInputType.numberWithOptions(),
@@ -80,7 +79,7 @@ class ForgotPassword extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Get.to(() => Loginscreen());
+                    Get.back();
                   },
                   child: const Text(
                     'Back to Login',
@@ -91,7 +90,7 @@ class ForgotPassword extends StatelessWidget {
                 Custombutton(
                   text: 'Create New Account',
                   onTap: () {
-                    Get.to(() => Signupscreen());
+                    Get.off(() => Signupscreen());
                   },
                   buttoncolor: Colors.white,
                   bordercolor: const Color.fromRGBO(114, 111, 220, 1),

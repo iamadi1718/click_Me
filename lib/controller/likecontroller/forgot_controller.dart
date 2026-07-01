@@ -19,10 +19,14 @@ class ForgotController extends GetxController {
 
       final response = await repository.forgotPassword(email: emailVal);
 
-      final message =
-          response['message'] ??
-          'We have sent you a password reset link to your email';
-      Utils().toastmessage(message);
+      if (response.success == true) {
+        final message = response.message ??
+            response.data?.message ??
+            'We have sent you a password reset link to your email';
+        Utils().toastmessage(message);
+      } else {
+        Utils().toastmessage(response.message ?? 'Failed to send reset link');
+      }
     } catch (error) {
       Utils().toastmessage(error.toString());
     } finally {

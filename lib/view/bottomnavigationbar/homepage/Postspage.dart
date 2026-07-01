@@ -1,6 +1,6 @@
 import 'package:click_me/Models/PostsModel/PostsModel.dart';
 import 'package:click_me/services/PostsServices/PostsServices.dart';
-import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:flutter/material.dart';
 
 class PostsScreen extends StatefulWidget {

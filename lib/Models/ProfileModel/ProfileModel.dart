@@ -61,6 +61,9 @@ class ProfileData {
   int? totalReels;
   int? totalSavedPosts;
 
+  String? gender;
+  String? dob;
+
   ProfileData({
     this.id,
     this.firstName,
@@ -91,6 +94,8 @@ class ProfileData {
     this.totalPosts,
     this.totalReels,
     this.totalSavedPosts,
+    this.gender,
+    this.dob,
   });
 
   ProfileData.fromJson(Map<String, dynamic> json) {
@@ -123,6 +128,8 @@ class ProfileData {
     totalPosts = json['totalPosts'];
     totalReels = json['totalReels'];
     totalSavedPosts = json['totalSavedPosts'];
+    gender = json['gender'];
+    dob = json['dob'];
   }
 
   Map<String, dynamic> toJson() {
@@ -156,6 +163,8 @@ class ProfileData {
       'totalPosts': totalPosts,
       'totalReels': totalReels,
       'totalSavedPosts': totalSavedPosts,
+      'gender': gender,
+      'dob': dob,
     };
   }
 }

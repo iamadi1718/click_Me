@@ -150,7 +150,7 @@ class _FollowingScreenState extends State<FollowingScreen> {
 
                           /// Message Button
                           SizedBox(
-                            width: 70,
+                            width: 90,
                             height: 34,
                             child: ElevatedButton(
                               onPressed: () {
@@ -160,6 +160,7 @@ class _FollowingScreenState extends State<FollowingScreen> {
                                   ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Colors.deepPurple,
+                                padding: EdgeInsets.zero,
                                 shape:
                                     RoundedRectangleBorder(
                                   borderRadius:
@@ -181,7 +182,7 @@ class _FollowingScreenState extends State<FollowingScreen> {
 
                           /// Unfollow Button
                           SizedBox(
-                            width: 80,
+                            width: 95,
                             height: 34,
                             child: ElevatedButton(
                               onPressed: () {
@@ -191,6 +192,7 @@ class _FollowingScreenState extends State<FollowingScreen> {
                                   ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Colors.grey,
+                                padding: EdgeInsets.zero,
                                 shape:
                                     RoundedRectangleBorder(
                                   borderRadius:

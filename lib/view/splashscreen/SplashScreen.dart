@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:click_me/data/services/local/storage_services.dart';
 import 'package:click_me/view/custombackground/Custombackground.dart';
+import 'package:click_me/view/dashboardpage/Dashboardpage.dart';
 import 'package:click_me/view/loginscreen/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'package:google_fonts/google_fonts.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -17,8 +21,15 @@ class _SplashscreenState extends State<Splashscreen> {
   void initState() {
     super.initState();
     Timer(
-      Duration(seconds: 3),
-      () => Get.off(() => Loginscreen()),
+      const Duration(seconds: 3),
+      () {
+        final token = StorageService.getAccessToken();
+        if (token.isNotEmpty) {
+          Get.off(() => Dashboardpage());
+        } else {
+          Get.off(() => Loginscreen());
+        }
+      },
     );
   }
 
@@ -35,7 +46,11 @@ class _SplashscreenState extends State<Splashscreen> {
             SizedBox(height: height * 0.05),
             Text(
               'Welcome to clickME!',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 34),
+              style: GoogleFonts.kufam(
+                fontWeight: FontWeight.w700,
+                fontSize: 34,
+                color: Colors.black87,
+              ),
             ),
           ],
         ),
