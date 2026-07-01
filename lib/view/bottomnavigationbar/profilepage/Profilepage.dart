@@ -1,12 +1,12 @@
-import 'package:click_me/services/Profileservices/Profileservices.dart';
 import 'package:click_me/view/editprofilepage/Editprofilepage.dart';
 import 'package:click_me/view/followersScreen/FollowersScreen.dart';
 import 'package:click_me/view/followingScreen.dart/FollowingScreen.dart';
 import 'package:click_me/view/postswidget/Postswidget.dart';
 import 'package:click_me/view/savedwidget/Savedwidget.dart';
 import 'package:flutter/material.dart';
-import 'package:click_me/Models/ProfileModel/ProfileModel.dart';
 import 'package:click_me/view/utils/Api.dart';
+import 'package:click_me/controller/profileController/ProfileController.dart';
+import 'package:get/get.dart';
 
 class Profilepage extends StatefulWidget {
   const Profilepage({super.key});
@@ -16,12 +16,8 @@ class Profilepage extends StatefulWidget {
 }
 
 class _ProfilepageState extends State<Profilepage> {
-  Future<ProfileModel>? futureProfile;
-  @override
-  void initState() {
-    super.initState();
-    futureProfile = ProfileService().getProfileData();
-  }
+  final ProfileController profileController =
+    Get.put(ProfileController());
 
   int selectedtab = 0;
   Color color = Colors.black;
@@ -32,22 +28,30 @@ class _ProfilepageState extends State<Profilepage> {
 
     return Scaffold(
       appBar: AppBar(title: Text('Profile')),
-      body: FutureBuilder(
-        future: futureProfile,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Obx(() {
 
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          }
+      if (profileController.isLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
 
-          if (!snapshot.hasData || snapshot.data!.data == null) {
-            return const Center(child: Text("No Profile Found"));
-          }
+      if (profileController.errorMessage.value.isNotEmpty) {
+        return Center(
+          child: Text(
+            profileController.errorMessage.value,
+          ),
+        );
+      }
 
-          final profile = snapshot.data!.data!;
+      if (profileController.profile.value == null) {
+        return const Center(
+          child: Text("No Profile Found"),
+        );
+      }
+
+      final profile = profileController.profile.value!;
+       
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

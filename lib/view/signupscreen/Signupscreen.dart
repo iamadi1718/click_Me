@@ -251,8 +251,12 @@ class _SignupscreenState extends State<Signupscreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
+<<<<<<< Updated upstream:lib/view/signupscreen/Signupscreen.dart
                                     builder:
                                         (context) => const AddProfilepage(),
+=======
+                                    builder: (context) => AddProfilepage(),
+>>>>>>> Stashed changes:lib/signupscreen/Signupscreen.dart
                                   ),
                                 );
                               })
