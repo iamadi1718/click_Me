@@ -17,13 +17,13 @@ class Dashboardpage extends StatelessWidget {
     const Homepage(),
     FriendsScreen(),
     Mediapage(),
-<<<<<<< HEAD
+
     ReelBottomPage(),
     Profilepage(),
-=======
+
     ReelsScreen(),
     const Profilepage(),
->>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
+
   ];
 
   @override

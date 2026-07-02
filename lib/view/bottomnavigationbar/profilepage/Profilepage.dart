@@ -1,13 +1,12 @@
 import 'dart:ui';
 
 import 'package:click_me/controller/likecontroller/profile_controller.dart';
-<<<<<<< HEAD
+ 
 import 'package:click_me/view/bottomnavigationbar/profilepage/ProfileImageView.dart';
-=======
+ 
 import 'package:click_me/services/liveservices/live_check_service.dart';
 import 'package:click_me/view/CreateLive_Screen/watch_live_screen.dart';
->>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
-import 'package:click_me/view/editprofilepage/Editprofilepage.dart';
+ import 'package:click_me/view/editprofilepage/Editprofilepage.dart';
 import 'package:click_me/view/followersScreen/FollowersScreen.dart';
 import 'package:click_me/view/followingScreen.dart/FollowingScreen.dart';
 import 'package:click_me/view/ExplorePostsScreen/ExplorePostsScreen.dart';
@@ -91,7 +90,6 @@ class Profilepage extends GetView<ProfileController> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-<<<<<<< HEAD
                  GestureDetector(
   onTap: () {
     Get.to(
@@ -112,7 +110,7 @@ class Profilepage extends GetView<ProfileController> {
   ),
 ),
  const SizedBox(width: 20),
-=======
+
                   // Avatar with LIVE ring (fetched via FutureBuilder)
                   FutureBuilder<Map<String, String>?>(
                     future: userId.isNotEmpty
@@ -193,7 +191,7 @@ class Profilepage extends GetView<ProfileController> {
                   const SizedBox(width: 20),
 
                   // Username + Stats
->>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -209,19 +207,20 @@ class Profilepage extends GetView<ProfileController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-<<<<<<< HEAD
-                            _profilestat(
+
+                            _stat(
                               profile.totalPosts.toString(),
                               "Posts",
                               () {
                                 
                               },
-=======
+                            ),
+
                             _stat(
                               profile.totalPosts?.toString() ?? '0',
                               'Posts',
                               () {},
->>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
+
                             ),
                             _stat(
                               profile.followersCount?.toString() ?? '0',
@@ -341,21 +340,17 @@ class Profilepage extends GetView<ProfileController> {
 
               // Tab Content
               Expanded(
-<<<<<<< HEAD
-                child: controller.selectedTab.value == 0
-                    ? ExplorePostsScreen()
-                    : controller.selectedTab.value == 1
-                        ? Savedwidget()
-                        : ExplorePostsScreen()
-=======
+
+               
+
                 child: Obx(
                   () => controller.selectedTab.value == 0
-                      ? Postswidget()
+                      ? ExplorePostsScreen()
                       : controller.selectedTab.value == 1
                           ? Savedwidget()
-                          : Postswidget(),
+                          : ExplorePostsScreen(),
                 ),
->>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
+
               ),
             ],
           ),

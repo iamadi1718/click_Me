@@ -1,6 +1,8 @@
 import 'package:click_me/controller/likecontroller/forgot_controller.dart';
+import 'package:click_me/view/custombackground/AuthenticationCustombackground.dart';
 import 'package:click_me/view/custombackground/Custombackground.dart';
 import 'package:click_me/view/custombutton/Custombutton.dart';
+import 'package:click_me/view/customtextfield/AuthenticationCustomTextfield.dart';
 import 'package:click_me/view/customtextfield/CustomTextfield.dart';
 import 'package:click_me/view/signupscreen/Signupscreen.dart';
 import 'package:flutter/material.dart';
@@ -15,35 +17,53 @@ class ForgotPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Custombackground(
-        widget: SingleChildScrollView(
+      body: AuthenticationCustombackground(
+        widget: Container(
+           margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 50),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            color: const Color(0xFF26234A).withOpacity(0.85),
+            border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.25),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: height * 0.2),
-                Image.asset('assets/images/splash_logo.png'),
-                SizedBox(height: height * 0.07),
+                
+                Image.asset('assets/images/splash_logo.png', scale: 2),
+                SizedBox(height: height * 0.02),
                 const Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.center,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      'Login Via OTP',
+                      'Reset Password',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ),
+                SizedBox(height: height * 0.01),
+                Text('Recover access to your account',style: TextStyle(color: Colors.grey),),
                 SizedBox(height: height * 0.03),
-                Customtextfield(
+                AuthenticationCustomtextfield(
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter your email';
@@ -60,41 +80,45 @@ class ForgotPassword extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                   controller: controller.email,
                 ),
-                Customtextfield(
-                  first: 'Enter phone',
-                  second: 'XXXXXX',
-                  controller: controller.phone,
-                  keyboardType: const TextInputType.numberWithOptions(),
-                ),
-                Custombutton(
-                  text: 'Reset Link',
+                InkWell(
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
                       controller.sendResetLink();
                     }
                   },
-                  buttoncolor: const Color.fromRGBO(85, 13, 155, 1),
-                  bordercolor: const Color.fromRGBO(85, 13, 155, 1),
-                  textcolor: Colors.white,
+                  child: Container(
+                     
+                    width: double.infinity,
+                    height: 55,
+                    decoration: BoxDecoration(color: Colors.blueAccent, borderRadius: BorderRadius.circular(14),),
+                    child: const Center(
+                      child: Text(
+                        "Send Reset Link",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
+                SizedBox(height:height*0.02,),
                 TextButton(
                   onPressed: () {
                     Get.back();
                   },
-                  child: const Text(
-                    'Back to Login',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  child: Row(
+                    mainAxisAlignment:MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.arrow_back,color:Colors.blue),
+                      SizedBox(width:width*0.02,),
+                      const Text(
+                        'Back to Login',
+                        style: TextStyle(color: Colors.blue, fontSize: 15),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(height: height * 0.1),
-                Custombutton(
-                  text: 'Create New Account',
-                  onTap: () {
-                    Get.off(() => Signupscreen());
-                  },
-                  buttoncolor: Colors.white,
-                  bordercolor: const Color.fromRGBO(114, 111, 220, 1),
-                  textcolor: const Color.fromRGBO(114, 111, 220, 1),
                 ),
               ],
             ),

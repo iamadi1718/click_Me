@@ -68,102 +68,6 @@ class _FirstpageState extends State<Firstpage> {
               return _buildStorySection(width, null, fallbackId);
             }
 
-<<<<<<< HEAD
-            if (!snapshot.hasData || snapshot.data![0] == null) {
-              return const SizedBox(
-                height: 196,
-                child: Center(child: Text("No Stories")),
-              );
-            }
-
-            final storyData = snapshot.data![0] as StoryModel;
-            final profileData = snapshot.data![1] as ProfileModel;
-
-            if (storyData.data == null || storyData.data!.stories == null) {
-              return const SizedBox(
-                height: 196,
-                child: Center(child: Text("No Stories")),
-              );
-            }
-
-            final users = storyData.data!.stories!;
-            final currentUserId =
-                profileData.data?.id ?? StorageService.getUserId();
-
-            StoryUser? currentUserStory;
-            final otherUsers = <StoryUser>[];
-            for (var u in users) {
-              if (u.user?.id == currentUserId) {
-                currentUserStory = u;
-              } else {
-                otherUsers.add(u);
-              }
-            }
-
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  const SizedBox(width: 10),
-                  Addstorycard(currentUserStory: currentUserStory),
-                  SizedBox(width: width * 0.05),
-
-                  ...otherUsers.expand((user) {
-                    return user.stories!.map((story) {
-                      return Padding(
-                        padding: EdgeInsets.only(right: width * 0.05),
-                        child: Customstory(
-                          bgimage:
-                              story.media?.url != null &&
-                                      story.media!.url!.isNotEmpty
-                                  ? NetworkImage(
-                                    "${Api.baseUrl}${story.media!.url}",
-                                  )
-                                  : const AssetImage("assets/images/chill.jpg")
-                                      as ImageProvider,
-                          profileImage:
-                              user.user?.profilePicture != null &&
-                                      user.user!.profilePicture!.isNotEmpty
-                                  ? NetworkImage(
-                                    "${Api.baseUrl}${user.user!.profilePicture}",
-                                  )
-                                  : const AssetImage(
-                                        "assets/images/profile.jpg",
-                                      )
-                                      as ImageProvider,
-                          text:
-                              "${user.user?.firstName ?? ""} ${user.user?.lastName ?? ""}",
-                          onTap: () {
-                            Get.to(
-                              () => StoryViewScreen(
-                                mediaUrl:
-                                    story.media?.url != null &&
-                                            story.media!.url!.isNotEmpty
-                                        ? "${Api.baseUrl}${story.media!.url}"
-                                        : "",
-                                username:
-                                    "${user.user?.firstName ?? ""} ${user.user?.lastName ?? ""}",
-                                profileImage:
-                                    user.user?.profilePicture != null &&
-                                            user
-                                                .user!
-                                                .profilePicture!
-                                                .isNotEmpty
-                                        ? "${Api.baseUrl}${user.user!.profilePicture}"
-                                        : "",
-                                caption: story.caption,
-                                timeAgo: "Just now",
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    });
-                  }).toList(),
-                ],
-              ),
-            );
-=======
             if (!profileSnapshot.hasData || profileSnapshot.data == null) {
               final fallbackId = StorageService.getUserId();
               return _buildStorySection(width, null, fallbackId);
@@ -173,7 +77,6 @@ class _FirstpageState extends State<Firstpage> {
             final currentUserId = profileData.data?.id ?? StorageService.getUserId();
 
             return _buildStorySection(width, profileData, currentUserId);
->>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
           },
         ),
         SizedBox(height: height * 0.03),
@@ -245,10 +148,6 @@ class _FirstpageState extends State<Firstpage> {
       ],
     );
   }
-<<<<<<< HEAD
-}
-=======
-
   Widget _buildStorySection(double width, dynamic profileData, String? currentUserId) {
     return Obx(() {
       if (storyFeedController.isLoading.value && storyFeedController.rxStory.value == null) {
@@ -336,5 +235,3 @@ class _FirstpageState extends State<Firstpage> {
     });
   }
 }
-
->>>>>>> 52a3752c2bfad51e83a02313ff8a62cb53f7761e
