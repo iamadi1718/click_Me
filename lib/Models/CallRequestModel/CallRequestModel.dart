@@ -19,18 +19,12 @@ class CallRequestModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-
-    data['statusCode'] = statusCode;
-
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-
-    data['message'] = message;
-    data['success'] = success;
-
-    return data;
+    return {
+      'statusCode': statusCode,
+      'data': data?.toJson(),
+      'message': message,
+      'success': success,
+    };
   }
 }
 
@@ -40,11 +34,16 @@ class CallData {
   String? status;
   String? encryptionKey;
 
+  CallUser? caller;
+  CallUser? receiver;
+
   CallData({
     this.callId,
     this.callType,
     this.status,
     this.encryptionKey,
+    this.caller,
+    this.receiver,
   });
 
   CallData.fromJson(Map<String, dynamic> json) {
@@ -52,16 +51,61 @@ class CallData {
     callType = json['callType'];
     status = json['status'];
     encryptionKey = json['encryptionKey'];
+
+    caller =
+        json['caller'] != null ? CallUser.fromJson(json['caller']) : null;
+
+    receiver =
+        json['receiver'] != null ? CallUser.fromJson(json['receiver']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
+    return {
+      'callId': callId,
+      'callType': callType,
+      'status': status,
+      'encryptionKey': encryptionKey,
+      'caller': caller?.toJson(),
+      'receiver': receiver?.toJson(),
+    };
+  }
+}
 
-    data['callId'] = callId;
-    data['callType'] = callType;
-    data['status'] = status;
-    data['encryptionKey'] = encryptionKey;
+class CallUser {
+  String? id;
+  String? firstName;
+  String? lastName;
+  String? username;
+  String? profilePicture;
 
-    return data;
+  CallUser({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.username,
+    this.profilePicture,
+  });
+
+  CallUser.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    firstName = json['firstName'];
+    lastName = json['lastName'];
+    username = json['username'];
+    profilePicture = json['profilePicture'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'username': username,
+      'profilePicture': profilePicture,
+    };
+  }
+
+  /// Convenience getter
+  String get fullName {
+    return '${firstName ?? ''} ${lastName ?? ''}'.trim();
   }
 }

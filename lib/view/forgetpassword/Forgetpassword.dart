@@ -1,10 +1,8 @@
 import 'package:click_me/controller/likecontroller/forgot_controller.dart';
 import 'package:click_me/view/custombackground/AuthenticationCustombackground.dart';
-import 'package:click_me/view/custombackground/Custombackground.dart';
-import 'package:click_me/view/custombutton/Custombutton.dart';
+ 
 import 'package:click_me/view/customtextfield/AuthenticationCustomTextfield.dart';
-import 'package:click_me/view/customtextfield/CustomTextfield.dart';
-import 'package:click_me/view/signupscreen/Signupscreen.dart';
+ 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

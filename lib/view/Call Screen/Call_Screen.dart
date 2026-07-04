@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:click_me/services/CallServices/CallServices.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,206 +9,249 @@ class CallScreen extends StatefulWidget {
   final String chatName;
   final String callId;
   final String callType;
+  final String? profileImage;
+  final bool isCaller;
 
-  const CallScreen({super.key, required this.chatName, required this.callId, required this.callType});
+  const CallScreen({
+    super.key,
+    required this.chatName,
+    required this.callId,
+    required this.callType,
+    required this.isCaller,
+    this.profileImage,
+  });
 
   @override
   State<CallScreen> createState() => _CallScreenState();
 }
 
 class _CallScreenState extends State<CallScreen> {
+
   bool _isMuted = false;
   bool _isVideoOff = false;
+  bool _speakerOn = false;
+
+  Duration _duration = Duration.zero;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) {
+        setState(() {
+          _duration += const Duration(seconds: 1);
+        });
+      },
+    );
+  }
+
+  String get timerText {
+
+    final h = _duration.inHours.toString().padLeft(2, '0');
+    final m =
+        (_duration.inMinutes % 60).toString().padLeft(2, '0');
+    final s =
+        (_duration.inSeconds % 60).toString().padLeft(2, '0');
+
+    if (_duration.inHours > 0) {
+      return "$h:$m:$s";
+    }
+
+    return "$m:$s";
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _endCall() async {
+
+    try {
+
+      await CallService().endCall(
+        callId: widget.callId,
+      );
+
+      Get.until((route) => route.isFirst);
+
+    } catch (e) {
+
+      Get.snackbar(
+        "Error",
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Colors.white,
+
+      backgroundColor: Colors.black,
+
       body: SafeArea(
+
         child: Column(
+
           children: [
-            // Top Navigation Bar
+
+            ///================ TOP BAR =================
+
             Container(
-              height: 56,
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+
               child: Row(
+
                 children: [
+
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
+
                     onPressed: () {
                       Get.back();
                     },
+
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.chatName,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Inter',
+
+                  Expanded(
+
+                    child: Column(
+
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+
+                      children: [
+
+                        Text(
+
+                          widget.chatName,
+
+                          style: const TextStyle(
+
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+
+                          ),
+
+                        ),
+                                                const SizedBox(height: 5),
+
+                        Text(
+                          widget.callType == "video"
+                              ? "Video Call"
+                              : "Voice Call",
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                          ),
+                        ),
+
+                        const SizedBox(height: 5),
+
+                        Text(
+                          timerText,
+                          style: const TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text("Call Type: ${widget.callType}"),
-    Text("Call ID: ${widget.callId}"),
                 ],
               ),
             ),
 
-            // Video Split View
+            ///================ REMOTE USER =================
+
             Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24.0),
-                  topRight: Radius.circular(24.0),
-                ),
-                child: Column(
+              flex: widget.callType == "video" ? 5 : 8,
+              child: Container(
+                width: double.infinity,
+                color: Colors.grey.shade900,
+                child: Stack(
                   children: [
-                    // Upper Half (Remote Video - Cat with sunglasses)
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: Image.asset(
-                              "assets/images/cc6d85fb0ebb0b4e9e7af266f103ae3421c66c1a.jpg",
+
+                    /// Remote Video Placeholder
+                    Positioned.fill(
+                      child: widget.callType == "video"
+                          ? Image.asset(
+                              "assets/images/live.jpg",
                               fit: BoxFit.cover,
+                            )
+
+                          /// Later replace with
+                          ///
+                          /// RTCVideoView(remoteRenderer)
+                          ///
+                          : Container(
+                              color: Colors.black,
                             ),
-                          ),
-                          // Center Profile Avatar
-                          Center(
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: const Color(0xff550D9B), // Purple border matching the screenshot
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/cc6d85fb0ebb0b4e9e7af266f103ae3421c66c1a.jpg",
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
 
-                    // Horizontal divider line
-                    Container(
-                      height: 2,
-                      color: Colors.white,
-                    ),
+                    /// Remote Avatar
 
-                    // Lower Half (Local Video - Wave/Woman)
-                    Expanded(
-                      child: Stack(
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Positioned.fill(
-                            child: _isVideoOff
-                                ? Container(
-                                    color: const Color(0xFF1E1E2C),
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.videocam_off,
-                                        color: Colors.white.withValues(alpha: 0.3),
-                                        size: 48,
-                                      ),
-                                    ),
-                                  )
-                                : Image.asset(
-                                    "assets/images/live.jpg",
-                                    fit: BoxFit.cover,
-                                  ),
+
+                          CircleAvatar(
+                            radius: 55,
+                            backgroundImage:
+                                widget.profileImage != null &&
+                                        widget.profileImage!.isNotEmpty
+                                    ? NetworkImage(
+                                        "${Api.baseUrl}${widget.profileImage}",
+                                      )
+                                    : const AssetImage(
+                                            "assets/images/profile.jpg",
+                                          )
+                                        as ImageProvider,
                           ),
-                          // Center Profile Avatar
-                          Center(
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: const Color(0xff550D9B),
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/live.jpg",
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+
+                          const SizedBox(height: 15),
+
+                          Text(
+                            widget.chatName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
 
-                          // Control Buttons Overlay at the bottom
-                          Positioned(
-                            bottom: 24.0,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                // Video Toggle Button
-                                IconButton(
-                                  icon: Icon(
-                                    _isVideoOff
-                                        ? Icons.videocam_off_rounded
-                                        : Icons.videocam_rounded,
-                                    color: Colors.white,
-                                    size: 32,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isVideoOff = !_isVideoOff;
-                                    });
-                                  },
-                                ),
+                          const SizedBox(height: 8),
 
-                                // End Call Button
-                                GestureDetector(
-                                  onTap: () {
-                                    Get.back();
-                                  },
-                                  child: Container(
-                                    width: 64,
-                                    height: 64,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.red,
-                                    ),
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.call_end_rounded,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                // Mute Toggle Button
-                                IconButton(
-                                  icon: Icon(
-                                    _isMuted
-                                        ? Icons.mic_off_rounded
-                                        : Icons.mic_rounded,
-                                    color: Colors.white,
-                                    size: 32,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isMuted = !_isMuted;
-                                    });
-                                  },
-                                ),
-                              ],
+                          Text(
+                            widget.isCaller
+                                ? "Calling..."
+                                : "Connected",
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
                             ),
                           ),
                         ],
@@ -212,6 +259,182 @@ class _CallScreenState extends State<CallScreen> {
                     ),
                   ],
                 ),
+              ),
+            ),
+
+            ///================ LOCAL VIDEO =================
+
+            if (widget.callType == "video")
+
+              Container(
+                height: 180,
+                width: double.infinity,
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  color: Colors.grey.shade800,
+                ),
+                child: Stack(
+                  children: [
+
+                    Positioned.fill(
+                      child: _isVideoOff
+                          ? const Center(
+                              child: Icon(
+                                Icons.videocam_off,
+                                color: Colors.white54,
+                                size: 50,
+                              ),
+                            )
+                          : Image.asset(
+                              "assets/images/live.jpg",
+                              fit: BoxFit.cover,
+                            ),
+
+                      /// Later replace with
+                      ///
+                      /// RTCVideoView(localRenderer)
+                      ///
+                    ),
+
+                    const Positioned(
+                      right: 12,
+                      top: 12,
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+                          ///================== BOTTOM CONTROLS ==================
+
+            Container(
+              padding: const EdgeInsets.only(
+                bottom: 25,
+                top: 10,
+              ),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+
+                  ///================ MUTE ==================
+
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _isMuted = !_isMuted;
+
+                       
+                      });
+                    },
+                    child: CircleAvatar(
+                      radius: 28,
+                      backgroundColor: Colors.grey.shade800,
+                      child: Icon(
+                        _isMuted
+                            ? Icons.mic_off
+                            : Icons.mic,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+
+                  ///================ SPEAKER ==================
+
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _speakerOn = !_speakerOn;
+
+                        /// TODO
+                        /// speaker on/off
+                      });
+                    },
+                    child: CircleAvatar(
+                      radius: 28,
+                      backgroundColor: Colors.grey.shade800,
+                      child: Icon(
+                        _speakerOn
+                            ? Icons.volume_up
+                            : Icons.hearing,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+
+                  ///================ END CALL ==================
+
+                  GestureDetector(
+                    onTap: _endCall,
+                    child: Container(
+                      width: 72,
+                      height: 72,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: const Icon(
+                        Icons.call_end,
+                        color: Colors.white,
+                        size: 34,
+                      ),
+                    ),
+                  ),
+
+                  ///================ VIDEO ==================
+
+                  if (widget.callType == "video")
+                    InkWell(
+                      onTap: () {
+
+                        setState(() {
+
+                          _isVideoOff = !_isVideoOff;
+
+                          /// TODO
+                          /// signaling.localStream
+                          ///     ?.getVideoTracks()
+                          ///     .first
+                          ///     .enabled = !_isVideoOff;
+
+                        });
+
+                      },
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.grey.shade800,
+                        child: Icon(
+                          _isVideoOff
+                              ? Icons.videocam_off
+                              : Icons.videocam,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+
+                  ///================ SWITCH CAMERA ==================
+
+                  if (widget.callType == "video")
+                    InkWell(
+                      onTap: () async {
+
+                        /// TODO
+                        /// await signaling.switchCamera();
+
+                      },
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.grey.shade800,
+                        child: const Icon(
+                          Icons.flip_camera_ios,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ],

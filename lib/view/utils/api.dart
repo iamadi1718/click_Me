@@ -1,5 +1,5 @@
 class Api {
-  static const String baseUrl = "http://103.207.183.10:5000";
+  static const String baseUrl = "https://api.clikkme.in";
   static const String signupUrl = "$baseUrl/api/v1/users/register";
   static const String loginUrl = "$baseUrl/api/v1/users/login";
   static const String otpverifyUrl = "$baseUrl/api/v1/users/verify-register";
@@ -36,4 +36,6 @@ class Api {
   static const String updateprofileUrl = "$baseUrl/api/v1/users/update-profile";
   static const String changepasswordUrl =
       "$baseUrl/api/v1/sers/change-password";
+      static const String sendMessagesUrl =
+      "$baseUrl/api/v1/chat/message/send";
 }

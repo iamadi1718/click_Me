@@ -33,11 +33,11 @@ class ChatInputField extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: "Enter your text here...",
                 filled: true,
-                fillColor: Colors.grey,
+                fillColor: Colors.white70,
                 suffixIcon: IconButton(
                   icon: const Icon(
                     Icons.add_photo_alternate_outlined,
-                    color: Colors.white,
+                    color: Colors.grey,
                   ),
                   onPressed: () {
                     // Action to upload image

@@ -5,11 +5,9 @@ import 'package:click_me/controller/likecontroller/profile_controller.dart';
 import 'package:click_me/view/bottomnavigationbar/profilepage/ProfileImageView.dart';
  
 import 'package:click_me/services/liveservices/live_check_service.dart';
-import 'package:click_me/view/CreateLive_Screen/watch_live_screen.dart';
  import 'package:click_me/view/editprofilepage/Editprofilepage.dart';
 import 'package:click_me/view/followersScreen/FollowersScreen.dart';
 import 'package:click_me/view/followingScreen.dart/FollowingScreen.dart';
-import 'package:click_me/view/ExplorePostsScreen/ExplorePostsScreen.dart';
 import 'package:click_me/view/ExplorePostsScreen/ExplorePostsScreen.dart';
 import 'package:click_me/view/savedwidget/Savedwidget.dart';
 import 'package:flutter/material.dart';
@@ -90,105 +88,83 @@ class Profilepage extends GetView<ProfileController> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                 GestureDetector(
-  onTap: () {
-    Get.to(
-      () => ProfileImageView(
-        imageUrl: "${Api.baseUrl}${profile.profileImage}",
-      ),
-      transition: Transition.fade,
-    );
-  },
-  child: Hero(
-    tag: "${Api.baseUrl}${profile.profileImage}",
-    child: CircleAvatar(
-      radius: 42,
-      backgroundImage: NetworkImage(
-        "${Api.baseUrl}${profile.profileImage}",
-      ),
-    ),
-  ),
-),
  const SizedBox(width: 20),
 
                   // Avatar with LIVE ring (fetched via FutureBuilder)
-                  FutureBuilder<Map<String, String>?>(
-                    future: userId.isNotEmpty
-                        ? LiveCheckService().getUserActiveLive(userId)
-                        : Future.value(null),
-                    builder: (context, snapshot) {
-                      final liveData = snapshot.data;
-                      final isLive = liveData != null &&
-                          liveData['streamId'] != null &&
-                          liveData['streamId']!.isNotEmpty;
+                 FutureBuilder<Map<String, String>?>(
+  future: userId.isNotEmpty
+      ? LiveCheckService().getUserActiveLive(userId)
+      : Future.value(null),
+  builder: (context, snapshot) {
 
-                      return GestureDetector(
-                        onTap: isLive
-                            ? () => Get.to(() => WatchLiveScreen(
-                                  streamId: liveData['streamId'] as String,
-                                  streamTitle: liveData['title'] ?? 'Live Stream',
-                                  streamerName: profile.username ?? '',
-                                ))
-                            : null,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            // LIVE ring when streaming
-                            Container(
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: isLive
-                                      ? Colors.red
-                                      : Colors.transparent,
-                                  width: 3,
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                radius: 42,
-                                backgroundImage: profile.profileImage != null &&
-                                        profile.profileImage!.isNotEmpty
-                                    ? NetworkImage(
-                                        '${Api.baseUrl}${profile.profileImage}')
-                                    : const AssetImage(
-                                            'assets/images/profile.jpg')
-                                        as ImageProvider,
-                              ),
-                            ),
-                            // LIVE badge below avatar
-                            if (isLive)
-                              Positioned(
-                                bottom: -8,
-                                left: 0,
-                                right: 0,
-                                child: Center(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Text(
-                                      'LIVE',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
-                    },
+    final liveData = snapshot.data;
+    final isLive = liveData != null &&
+        liveData['streamId'] != null &&
+        liveData['streamId']!.isNotEmpty;
+
+    return GestureDetector(
+      onTap: () {
+        Get.to(
+          () => ProfileImageView(
+            imageUrl: "${Api.baseUrl}${profile.profileImage}",
+          ),
+          transition: Transition.fade,
+        );
+      },
+      child: Hero(
+        tag: "${Api.baseUrl}${profile.profileImage}",
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isLive ? Colors.red : Colors.transparent,
+                  width: 3,
+                ),
+              ),
+              child: CircleAvatar(
+                radius: 42,
+                backgroundImage: profile.profileImage != null &&
+                        profile.profileImage!.isNotEmpty
+                    ? NetworkImage("${Api.baseUrl}${profile.profileImage}")
+                    : const AssetImage("assets/images/profile.jpg")
+                        as ImageProvider,
+              ),
+            ),
+
+            if (isLive)
+              Positioned(
+                bottom: -8,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      "LIVE",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-
-                  const SizedBox(width: 20),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  },
+), const SizedBox(width: 20),
 
                   // Username + Stats
 
@@ -208,13 +184,7 @@ class Profilepage extends GetView<ProfileController> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
 
-                            _stat(
-                              profile.totalPosts.toString(),
-                              "Posts",
-                              () {
-                                
-                              },
-                            ),
+                            
 
                             _stat(
                               profile.totalPosts?.toString() ?? '0',

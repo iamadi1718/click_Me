@@ -44,15 +44,12 @@ class _SplashscreenState extends State<Splashscreen> {
           children: [
             Image.asset('assets/images/splash_logo.png'),
             SizedBox(height: height * 0.05),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Welcome to clickME!',
-                style: GoogleFonts.kufam(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 34,
-                  color: Colors.black87,
-                ),
+            Text(
+              'Welcome to clickME!',
+              style: GoogleFonts.kufam(
+                fontWeight: FontWeight.w700,
+                fontSize: 34,
+                color: Colors.black87,
               ),
             ),
           ],
