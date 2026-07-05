@@ -14,12 +14,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:click_me/view/utils/api.dart';
 
-class Profilepage extends GetView<ProfileController> {
-  const Profilepage({super.key});
+class Profilepage extends StatelessWidget{
+   Profilepage({super.key});
 
   @override
-  ProfileController get controller =>
-      Get.put(ProfileController(), permanent: false);
+  final ProfileController controller =
+    Get.isRegistered<ProfileController>()
+        ? Get.find<ProfileController>()
+        : Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {

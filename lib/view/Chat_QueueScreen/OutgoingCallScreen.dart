@@ -27,27 +27,33 @@ class OutgoingCallScreen extends StatefulWidget {
 class _OutgoingCallScreenState extends State<OutgoingCallScreen> {
   late StreamSubscription callAcceptedSubscription;
   @override
+@override
 void initState() {
   super.initState();
 
+  print("OutgoingCallScreen Opened");
+
   callAcceptedSubscription =
-      SocketManager().onCallAccepted.listen((data) {
+    SocketManager().onCallAccepted.listen((data) {
 
-    print("CALL ACCEPTED");
-    print(data);
+  print(data);
 
-    Get.to(
-  () => CallScreen(
-    callId: widget.callId,
-    chatName: widget.userName,
-    profileImage: widget.profileImage,
-    isCaller: true,
-    isVideoCall: widget.callType == "video",
-  ),
-);
-  });
-}
-@override
+  if (data["callId"] != widget.callId) {
+    return;
+  }
+
+  Get.off(
+    () => CallScreen(
+      callId: widget.callId,
+      chatName: widget.userName,
+      profileImage: widget.profileImage,
+      isCaller: true,
+      isVideoCall: widget.callType == "video",
+    ),
+  );
+});
+  
+}@override
 void dispose() {
   callAcceptedSubscription.cancel();
   super.dispose();

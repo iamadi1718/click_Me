@@ -36,4 +36,5 @@ class Api {
   static const String changepasswordUrl =
       "$baseUrl/api/v1/sers/change-password";
   static const String sendMessagesUrl = "$baseUrl/api/v1/chat/message/send";
+ 
 }

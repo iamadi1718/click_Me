@@ -81,12 +81,14 @@ class Requester {
   String? id;
   String? firstName;
   String? lastName;
+  String? username;
   String? profilePicture;
 
   Requester({
     this.id,
     this.firstName,
     this.lastName,
+    this.username,
     this.profilePicture,
   });
 
@@ -94,15 +96,17 @@ class Requester {
     id = json['_id'];
     firstName = json['firstName'];
     lastName = json['lastName'];
+    username = json['username'];
     profilePicture = json['profilePicture'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = id;
-    data['firstName'] = firstName;
-    data['lastName'] = lastName;
-    data['profilePicture'] = profilePicture;
-    return data;
+    return {
+      '_id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'username': username,
+      'profilePicture': profilePicture,
+    };
   }
 }

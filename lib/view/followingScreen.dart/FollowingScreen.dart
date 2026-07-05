@@ -1,7 +1,8 @@
 import 'package:click_me/Models/FollowingModel/FollowingModel.dart';
-import 'package:click_me/services/FollowingServices/FollowingServices.dart';
+import 'package:click_me/controller/followingController/FollowingController.dart';
+import 'package:click_me/view/utils/api.dart';
 import 'package:flutter/material.dart';
- 
+import 'package:get/get.dart';
 
 class FollowingScreen extends StatefulWidget {
   const FollowingScreen({super.key});
@@ -11,16 +12,10 @@ class FollowingScreen extends StatefulWidget {
 }
 
 class _FollowingScreenState extends State<FollowingScreen> {
-  late Future<FollowingModel> future;
-
-  final String imageBaseUrl = "https://your-domain.com";
-
-  @override
-  void initState() {
-    super.initState();
-    future = FollowingService().getFollowingData();
-  }
-
+final FollowingController controller =
+    Get.isRegistered<FollowingController>()
+        ? Get.find<FollowingController>()
+        : Get.put(FollowingController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,193 +27,189 @@ class _FollowingScreenState extends State<FollowingScreen> {
         foregroundColor: Colors.black,
         title: const Text(
           "Following",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
 
-      body: FutureBuilder<FollowingModel>(
-        future: future,
-        builder: (context, snapshot) {
+      body: Obx(() {
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+  if (controller.isLoading.value) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
+  if (controller.filteredFollowing.isEmpty) {
+    return const Center(
+      child: Text("No Following Found"),
+    );
+  }
 
-          if (!snapshot.hasData ||
-              snapshot.data!.data == null ||
-              snapshot.data!.data!.following == null) {
-            return const Center(
-              child: Text("No Following Found"),
-            );
-          }
+  return RefreshIndicator(
+    onRefresh: controller.refreshData,
+    child: Column(
+      children: [
 
-          List<Following> users =
-              snapshot.data!.data!.following!;
-
-          return Column(
-            children: [
-
-              /// Search Bar
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search chat here",
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.grey.shade200,
-                    contentPadding: EdgeInsets.zero,
-                    border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: TextField(
+            onChanged: controller.search,
+            decoration: InputDecoration(
+              hintText: "Search Following",
+              prefixIcon: const Icon(Icons.search),
+              filled: true,
+              fillColor: Colors.grey.shade200,
+              contentPadding: EdgeInsets.zero,
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.circular(30),
+                borderSide: BorderSide.none,
               ),
+            ),
+          ),
+        ),
 
-              /// Following List
-              Expanded(
-                child: ListView.builder(
-                  itemCount: users.length,
-                  itemBuilder: (context, index) {
+        Expanded(
+          child: ListView.builder(
+            physics:
+                const AlwaysScrollableScrollPhysics(),
+            itemCount:
+                controller.filteredFollowing.length,
+            itemBuilder: (context, index) {
 
-                    final user = users[index];
+              final user =
+                  controller.filteredFollowing[index];
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8),
-                      child: Row(
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundImage:
+                          user.profilePicture != null &&
+                                  user.profilePicture!
+                                      .isNotEmpty
+                              ? NetworkImage(
+                                  "${Api.baseUrl}${user.profilePicture}",
+                                )
+                              : null,
+                      child:
+                          user.profilePicture == null
+                              ? const Icon(Icons.person)
+                              : null,
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
 
-                          /// Profile Image
-                          CircleAvatar(
-                            radius: 23,
-                            backgroundImage:
-                                user.profilePicture != null
-                                    ? NetworkImage(
-                                        imageBaseUrl +
-                                            user.profilePicture!)
-                                    : null,
-                            child: user.profilePicture ==
-                                    null
-                                ? const Icon(Icons.person)
-                                : null,
-                          ),
-
-                          const SizedBox(width: 12),
-
-                          /// Name
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
-
-                                Text(
-                                  user.fullName ?? "",
-                                  style: const TextStyle(
-                                    fontWeight:
-                                        FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 2),
-
-                                Text(
-                                  "@${user.username}",
-                                  style: TextStyle(
-                                    color: Colors.grey.shade700,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
+                          Text(
+                            user.fullName ?? "",
+                            style: const TextStyle(
+                              fontWeight:
+                                  FontWeight.bold,
+                              fontSize: 15,
                             ),
                           ),
 
-                          /// Message Button
-                          SizedBox(
-                            width: 90,
-                            height: 34,
-                            child: ElevatedButton(
-                              onPressed: () {
-
-                              },
-                              style:
-                                  ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.deepPurple,
-                                padding: EdgeInsets.zero,
-                                shape:
-                                    RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(
-                                          8),
-                                ),
-                              ),
-                              child: const Text(
-                                "Message",
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(width: 8),
-
-                          /// Unfollow Button
-                          SizedBox(
-                            width: 95,
-                            height: 34,
-                            child: ElevatedButton(
-                              onPressed: () {
-
-                              },
-                              style:
-                                  ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.grey,
-                                padding: EdgeInsets.zero,
-                                shape:
-                                    RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(
-                                          8),
-                                ),
-                              ),
-                              child: const Text(
-                                "Unfollow",
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white,
-                                ),
-                              ),
+                          Text(
+                            "@${user.username}",
+                            style: const TextStyle(
+                              color: Colors.grey,
                             ),
                           ),
                         ],
                       ),
-                    );
-                  },
+                    ),
+
+                    /// MESSAGE BUTTON
+                    SizedBox(
+                      width: 90,
+                      height: 36,
+                      child: ElevatedButton(
+                        onPressed: () {
+
+                          /// Navigate to Chat Screen
+                          /// Get.to(ChatScreen(user));
+
+                        },
+                        style:
+                            ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.deepPurple,
+                        ),
+                        child: const Text(
+                          "Message",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    /// UNFOLLOW
+                    SizedBox(
+                      width: 95,
+                      height: 36,
+                      child: ElevatedButton(
+                        onPressed: controller
+                                    .actionLoadingId
+                                    .value ==
+                                user.id
+                            ? null
+                            : () {
+                                controller.unfollow(
+                                  user.id!,
+                                );
+                              },
+                        style:
+                            ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.grey,
+                        ),
+                        child: controller
+                                    .actionLoadingId
+                                    .value ==
+                                user.id
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child:
+                                    CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                "Unfollow",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}),);
   }
 }

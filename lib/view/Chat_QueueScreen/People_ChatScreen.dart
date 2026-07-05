@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:click_me/Models/ChatMessagesModel/ChatMessageModel.dart';
 import 'package:click_me/data/services/local/storage_services.dart';
 import 'package:click_me/services/CallServices/CallServices.dart';
+import 'package:click_me/services/CallServices/CallWebRTCSignaling.dart';
 import 'package:click_me/services/ChatDetailsServices/ChatDetailsServices.dart';
 import 'package:click_me/services/SendMessageService/SendMessageService.dart';
 import 'package:click_me/view/Chat_QueueScreen/OutgoingCallScreen.dart';
@@ -160,25 +161,30 @@ class _PeopleChatScreenState extends State<PeopleChatScreen> {
                   onPressed: () async {
                     try {
                       final response = await CallService().requestCall(
-                        receiverId: widget.receiverId,
-                        callType: "audio",
-                      );
+  receiverId: widget.receiverId,
+  callType: "audio",
+);
 
-                      if (response.success == true) {
-                        final receiver = response.data?.receiver;
+if (response.success == true && response.data != null) {
 
-                        Get.to(
-                          () => OutgoingCallScreen(
-                            userName:
-                                receiver?.fullName.isNotEmpty == true
-                                    ? receiver!.fullName
-                                    : widget.chatName,
-                            profileImage: receiver?.profilePicture,
-                            callId: response.data?.callId ?? "",
-                            callType: response.data?.callType ?? "audio",
-                          ),
-                        );
-                      }
+  await WebRTCSignaling.instance.createCall(
+    callId: response.data!.callId!,
+    isVideoCall: false,
+  );
+
+  final receiver = response.data?.receiver;
+
+  Get.to(
+    () => OutgoingCallScreen(
+      userName: receiver?.fullName.isNotEmpty == true
+          ? receiver!.fullName
+          : widget.chatName,
+      profileImage: receiver?.profilePicture,
+      callId: response.data!.callId!,
+      callType: response.data!.callType!,
+    ),
+  );
+}
                     } catch (e) {
                       print(e);
                     }
@@ -189,26 +195,31 @@ class _PeopleChatScreenState extends State<PeopleChatScreen> {
                 IconButton(
                   onPressed: () async {
                     try {
-                      final response = await CallService().requestCall(
-                        receiverId: widget.receiverId,
-                        callType: "video",
-                      );
+                     final response = await CallService().requestCall(
+  receiverId: widget.receiverId,
+  callType: "video",
+);
 
-                      if (response.success == true) {
-                        final receiver = response.data?.receiver;
+if (response.success == true && response.data != null) {
 
-                        Get.to(
-                          () => OutgoingCallScreen(
-                            userName:
-                                receiver?.fullName.isNotEmpty == true
-                                    ? receiver!.fullName
-                                    : widget.chatName,
-                            profileImage: receiver?.profilePicture,
-                            callId: response.data?.callId ?? "",
-                            callType: response.data?.callType ?? "audio",
-                          ),
-                        );
-                      }
+  await WebRTCSignaling.instance.createCall(
+    callId: response.data!.callId!,
+    isVideoCall: true,
+  );
+
+  final receiver = response.data?.receiver;
+
+  Get.to(
+    () => OutgoingCallScreen(
+      userName: receiver?.fullName.isNotEmpty == true
+          ? receiver!.fullName
+          : widget.chatName,
+      profileImage: receiver?.profilePicture,
+      callId: response.data!.callId!,
+      callType: response.data!.callType!,
+    ),
+  );
+}
                     } catch (e) {
                       print(e);
                     }

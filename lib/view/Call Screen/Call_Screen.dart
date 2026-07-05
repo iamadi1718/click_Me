@@ -298,20 +298,9 @@ Widget buildBottomControls() {
       Get.back();
     };
 
-    if (widget.isCaller) {
-
-      await signaling.createCall(
-        callId: widget.callId,
-        isVideoCall: widget.isVideoCall,
-      );
-
-    } else {
-
-      await signaling.joinCall(
-        callId: widget.callId,
-      );
-
-    }
+    if (!widget.isCaller) {
+  await signaling.joinCall(callId: widget.callId);
+}
 
     if (mounted) {
       setState(() {});
