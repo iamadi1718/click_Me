@@ -165,17 +165,17 @@ class IncomingCallScreen extends StatelessWidget {
                               callId: callId,
                             );
 
-                           Get.off(
+                          Get.off(
   () => CallScreen(
-    chatName: callerName,
     callId: callId,
-    callType: callType,
+    chatName: callerName,
     profileImage: profileImage,
     isCaller: false,
+    isVideoCall: callType == "video",
   ),
 );
-
-                          }catch(e){
+}
+catch(e){
 
                             Get.snackbar(
                               "Error",

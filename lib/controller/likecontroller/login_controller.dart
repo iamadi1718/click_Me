@@ -1,3 +1,4 @@
+import 'package:click_me/services/SocketManager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,6 +41,7 @@ class LoginController extends GetxController {
       await StorageService.saveAccessToken(response.data.accessToken);
       await StorageService.saveRefreshToken(response.data.refreshToken);
       await StorageService.saveUserId(response.data.user.id);
+      SocketManager().init();
 
       // 4. Navigate to Dashboard
       Get.offAll(() => Dashboardpage());

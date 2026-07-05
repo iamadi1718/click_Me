@@ -22,10 +22,9 @@ class Api {
   static const String reelsUrl = "$baseUrl/api/v1/feed/reels";
   static const String postsUrl = "$baseUrl/api/v1/post/explore";
   static const String chatMessagesUrl = "$baseUrl/api/v1/chat/messages";
-    static const String explorePostsUrl = "$baseUrl/api/v1/post/explore";
-    static const String getCommentsUrl = "$baseUrl/api/v1/post/comments";
-       static const String commentLikeUrl = "$baseUrl/api/v1/comment/like";
-
+  static const String explorePostsUrl = "$baseUrl/api/v1/post/explore";
+  static const String getCommentsUrl = "$baseUrl/api/v1/post/comments";
+  static const String commentLikeUrl = "$baseUrl/api/v1/comment/like";
 
   static const String createliveUrl = "$baseUrl/api/v1/live/create";
   static const String startliveUrl = "$baseUrl/api/v1/live/start";
@@ -36,6 +35,5 @@ class Api {
   static const String updateprofileUrl = "$baseUrl/api/v1/users/update-profile";
   static const String changepasswordUrl =
       "$baseUrl/api/v1/sers/change-password";
-      static const String sendMessagesUrl =
-      "$baseUrl/api/v1/chat/message/send";
+  static const String sendMessagesUrl = "$baseUrl/api/v1/chat/message/send";
 }
