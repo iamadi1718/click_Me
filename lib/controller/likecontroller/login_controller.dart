@@ -41,7 +41,10 @@ class LoginController extends GetxController {
       await StorageService.saveAccessToken(response.data.accessToken);
       await StorageService.saveRefreshToken(response.data.refreshToken);
       await StorageService.saveUserId(response.data.user.id);
-      SocketManager().init();
+      print("LOGIN -> Calling SocketManager.init()");
+SocketManager().init();
+
+print("LOGIN -> init() finished");
 
       // 4. Navigate to Dashboard
       Get.offAll(() => Dashboardpage());

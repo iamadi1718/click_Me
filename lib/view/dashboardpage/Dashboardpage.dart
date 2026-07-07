@@ -36,7 +36,7 @@ class _DashboardpageState extends State<Dashboardpage> {
     Profilepage(),
 
     ReelsScreen(),
-    const Profilepage(),
+    Profilepage(),
   ];
   late StreamSubscription incomingCallSubscription;
   @override
@@ -45,24 +45,25 @@ class _DashboardpageState extends State<Dashboardpage> {
     print("NEW DASHBOARD CODE RUNNING");
 
     incomingCallSubscription = SocketManager().onIncomingCall.listen((data) {
-      print("Incoming Call Dashboard");
-      print("==============");
-      print(data.runtimeType);
+      print("========== RAW SOCKET ==========");
       print(data);
-      print("==============");
+      print("callId -> ${data["callId"]}");
+      print("callType -> ${data["callType"]}");
+      print("callerInfo -> ${data["callerInfo"]}");
 
-      final caller = data["caller"];
+      final caller = Map<String, dynamic>.from(data["caller"] ?? {});
 
       Get.to(
-        () => IncomingCallScreen(
-          callId: data["callId"] ?? "",
-          callType: data["callType"] ?? "audio",
-          callerName:
-              "${caller?["firstName"] ?? ""} ${caller?["lastName"] ?? ""}"
-                  .trim(),
-          profileImage: caller?["profilePicture"],
-        ),
-      );
+  () => IncomingCallScreen(
+    callId: data["callId"] ?? "",
+    callType: data["callType"] ?? "audio",
+    callerId: caller["_id"] ?? "",
+    threadId: data["threadId"],
+    callerName:
+        "${caller["firstName"] ?? ""} ${caller["lastName"] ?? ""}".trim(),
+    profileImage: caller["profilePicture"],
+  ),
+);
     });
   }
 

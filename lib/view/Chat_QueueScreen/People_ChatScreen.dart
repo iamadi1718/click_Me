@@ -3,14 +3,15 @@ import 'dart:async';
 import 'package:click_me/Models/ChatMessagesModel/ChatMessageModel.dart';
 import 'package:click_me/data/services/local/storage_services.dart';
 import 'package:click_me/services/CallServices/CallServices.dart';
-import 'package:click_me/services/CallServices/CallWebRTCSignaling.dart';
 import 'package:click_me/services/ChatDetailsServices/ChatDetailsServices.dart';
 import 'package:click_me/services/SendMessageService/SendMessageService.dart';
+import 'package:click_me/services/socket_manager.dart';
+import 'package:click_me/services/SocketManager.dart';
+
 import 'package:click_me/view/Chat_QueueScreen/OutgoingCallScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:click_me/view/custom/Message_Bubble.dart';
-import 'package:click_me/view/Call%20Screen/Call_Screen.dart';
 import 'package:click_me/view/custom/Chat_message.dart';
 import 'package:click_me/view/custom/chat_background.dart';
 import 'package:click_me/view/custom/wallpaper.dart';
@@ -62,18 +63,30 @@ class _PeopleChatScreenState extends State<PeopleChatScreen> {
   }
 
   Timer? _timer;
+  StreamSubscription? _messageSub;
 
   @override
   void initState() {
     super.initState();
+    SocketManager.instance.currentChatThreadId = widget.threadId;
 
     loadMessages();
 
     _timer = Timer.periodic(const Duration(seconds: 2), (_) => loadMessages());
+
+    _messageSub = SocketManager.instance.onReceiveMessage.listen((data) {
+      if (mounted) {
+        setState(() {
+          messages.insert(0, Message.fromJson(data));
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
+    SocketManager.instance.currentChatThreadId = null;
+    _messageSub?.cancel();
     _timer?.cancel();
     messageController.dispose();
     super.dispose();
@@ -159,32 +172,40 @@ class _PeopleChatScreenState extends State<PeopleChatScreen> {
 
                 IconButton(
                   onPressed: () async {
+                    print("========== BEFORE REQUEST ==========");
+                    print("Socket Object : ${SocketManager().socket}");
+                    print(
+                      "Socket Connected : ${SocketManager().socket?.connected}",
+                    );
+                    print("isConnected : ${SocketManager().isConnected.value}");
+                    print("===================================");
                     try {
                       final response = await CallService().requestCall(
-  receiverId: widget.receiverId,
-  callType: "audio",
-);
+                        receiverId: widget.receiverId,
+                        callType: "audio",
+                      );
 
-if (response.success == true && response.data != null) {
-
-  await WebRTCSignaling.instance.createCall(
-    callId: response.data!.callId!,
-    isVideoCall: false,
-  );
-
-  final receiver = response.data?.receiver;
-
-  Get.to(
-    () => OutgoingCallScreen(
-      userName: receiver?.fullName.isNotEmpty == true
-          ? receiver!.fullName
-          : widget.chatName,
-      profileImage: receiver?.profilePicture,
-      callId: response.data!.callId!,
-      callType: response.data!.callType!,
-    ),
-  );
-}
+                      if (response.success == true) {
+                        final receiver = response.data?.receiver;
+                        print("================================");
+                        print("Before opening Outgoing Screen");
+                        print("Socket object : ${SocketManager().socket}");
+                        print(
+                          "Connected : ${SocketManager().socket?.connected}",
+                        );
+                        print("================================");
+                        Get.to(
+                          () => OutgoingCallScreen(
+                            userName:
+                                receiver?.fullName.isNotEmpty == true
+                                    ? receiver!.fullName
+                                    : widget.chatName,
+                            profileImage: receiver?.profilePicture,
+                            callId: response.data?.callId ?? "",
+                            callType: response.data?.callType ?? "audio",
+                          ),
+                        );
+                      }
                     } catch (e) {
                       print(e);
                     }
@@ -194,32 +215,40 @@ if (response.success == true && response.data != null) {
 
                 IconButton(
                   onPressed: () async {
+                    print("========== BEFORE REQUEST ==========");
+                    print("Socket Object : ${SocketManager().socket}");
+                    print(
+                      "Socket Connected : ${SocketManager().socket?.connected}",
+                    );
+                    print("isConnected : ${SocketManager().isConnected.value}");
+                    print("===================================");
                     try {
-                     final response = await CallService().requestCall(
-  receiverId: widget.receiverId,
-  callType: "video",
-);
+                      final response = await CallService().requestCall(
+                        receiverId: widget.receiverId,
+                        callType: "video",
+                      );
 
-if (response.success == true && response.data != null) {
-
-  await WebRTCSignaling.instance.createCall(
-    callId: response.data!.callId!,
-    isVideoCall: true,
-  );
-
-  final receiver = response.data?.receiver;
-
-  Get.to(
-    () => OutgoingCallScreen(
-      userName: receiver?.fullName.isNotEmpty == true
-          ? receiver!.fullName
-          : widget.chatName,
-      profileImage: receiver?.profilePicture,
-      callId: response.data!.callId!,
-      callType: response.data!.callType!,
-    ),
-  );
-}
+                      if (response.success == true) {
+                        final receiver = response.data?.receiver;
+                        print("================================");
+                        print("Before opening Outgoing Screen");
+                        print("Socket object : ${SocketManager().socket}");
+                        print(
+                          "Connected : ${SocketManager().socket?.connected}",
+                        );
+                        print("================================");
+                        Get.to(
+                          () => OutgoingCallScreen(
+                            userName:
+                                receiver?.fullName.isNotEmpty == true
+                                    ? receiver!.fullName
+                                    : widget.chatName,
+                            profileImage: receiver?.profilePicture,
+                            callId: response.data?.callId ?? "",
+                            callType: response.data?.callType ?? "audio",
+                          ),
+                        );
+                      }
                     } catch (e) {
                       print(e);
                     }
